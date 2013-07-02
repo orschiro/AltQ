@@ -3,30 +3,35 @@ var currentTab;
 
 function init() {
 	chrome.tabs.getSelected(null, function(tab) {
-		previousTab = tab.id;
-		currentTab = null;
+	previousTab = tab.id;
+	currentTab = null;
 	});
 }
 
+// Toggle if user clicks on the extension icon
 chrome.browserAction.onClicked.addListener(function(tab) {
 	chrome.tabs.update(previousTab, {selected: true});
 });
 
-chrome.tabs.onSelectionChanged.addListener(function(tab) {
-	if (previousTab == null) {
-		previousTab = tab;
-	}
-	if (currentTab == null) {
-		currentTab = tab;
-	}
-	else {
-		previousTab = currentTab;
-		currentTab = tab;
-	}
-});
+// Toggle if user presses the keyboard shortcut
+chrome.commands.onCommand.addListener(function(command) {
+  if (command == "toggle") {
 
-chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
-	if(request.request == "toggle") {
+	init();
+
+	chrome.tabs.onSelectionChanged.addListener(function(tab) {
+		if (previousTab == null) {
+			previousTab = tab;
+		}
+		if (currentTab == null) {
+			currentTab = tab;
+		}
+		else {
+			previousTab = currentTab;
+			currentTab = tab;
+		}
+	});
+
 		chrome.tabs.update(previousTab, {selected: true});
 	}
 });
