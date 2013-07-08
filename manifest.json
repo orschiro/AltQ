@@ -6,11 +6,11 @@
 		"persistent": false
 	},
 	"name": "Toggle Switch Recent Last Tabs",
-	"version": "1.0",
+	"version": "1.1",
 	"manifest_version": 2,
 	"description": "Toggle between your current and last used (focused) tab with a keyboard shortcut (ALT+Q by default) or mouse click on the icon.",
 	"browser_action": {
-		"default_title": "Toggle Switch Recent Last Tabs",
+		"default_title": "",
 		"default_icon": "icon.png"
 	},
 	"commands": {
@@ -22,7 +22,9 @@
 		}
 	},
 	"permissions": [
-		"tabs"
+		"tabs", 
+		"http://*/",
+		"https://*/*"
 	],
 	"icons": {
 		"16": "icon_16.png",
