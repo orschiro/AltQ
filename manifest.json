@@ -3,10 +3,10 @@
 
 	"background": {
 		"scripts": ["background.js"],
-		"persistent": false
+        "persistent": true
 	},
 	"name": "Toggle Switch Recent Last Tabs",
-	"version": "1.1",
+	"version": "1.2",
 	"manifest_version": 2,
 	"description": "Toggle between your current and last used (focused) tab with a keyboard shortcut (ALT+Q by default) or mouse click on the icon.",
 	"browser_action": {
@@ -23,6 +23,7 @@
 	},
 	"permissions": [
 		"tabs", 
+		"storage",
 		"http://*/",
 		"https://*/*"
 	],
