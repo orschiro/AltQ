@@ -1,57 +1,43 @@
 var previousTab;
+var previousPreviousTab;
 var currentTab;
 
-// General functions
+// Switch tab on button click
 chrome.browserAction.onClicked.addListener(function(tab) {
     chrome.tabs.update(previousTab, {selected: true});
 });
 
-chrome.tabs.onActivated.addListener(function(tab) {
-    if (previousTab == null) {
-        previousTab = tab;
-        // Save it using the Chrome extension storage API.
-		chrome.storage.sync.set({'value': previousTab}, function() {
-            // Notify that we saved.
-			message('Settings saved');
-        });
-		
-    }
-    if (currentTab == null) {
-        currentTab = tab;
-        // Save it using the Chrome extension storage API.
-		chrome.storage.sync.set({'value': currentTab}, function() {
-            // Notify that we saved.
-			message('Settings saved');
-        });
-    }
-    else {
-        previousTab = currentTab;
-        // Save it using the Chrome extension storage API.
-		chrome.storage.sync.set({'value': previousTab}, function() {
-            // Notify that we saved.
-			message('Settings saved');
-        });
-        currentTab = tab;
-        // Save it using the Chrome extension storage API.
-		chrome.storage.sync.set({'value': currentTab}, function() {
-            // Notify that we saved.
-			message('Settings saved');
-        });
-    }
-});
-
-
 // Keyboard shortcut toggle function
 chrome.commands.onCommand.addListener(function(command) {
   if (command == "toggle") {
-
-    chrome.tabs.getSelected(null, function(tab) {
-        previousTab = tab.id;
-        currentTab = null;
-    });
-
     chrome.tabs.update(previousTab, {selected: true});
   }
 });
 
+// Update variables on tab change
+chrome.tabs.onSelectionChanged.addListener(function(tab) {
+    if (previousTab == null) {
+        previousTab = tab;
+    }
+    if (currentTab == null) {
+        currentTab = tab;
+    }
+    else {
+        previousTab = currentTab;
+        currentTab = tab;
+    }
+});
 
+// Update variables on tab creation
+chrome.tabs.onCreated.addListener(function(tab) {
+    previousPreviousTab = previousTab;
+    console.log("Previous Previous Tab is" + previousPreviousTab);
+    console.log("Previous Tab is" + previousTab);
+});
+
+// Update variables on tab removal
+chrome.tabs.onRemoved.addListener(function(tab) {
+    previousTab = previousPreviousTab;
+    console.log("Previous Previous Tab is" + previousPreviousTab);
+    console.log("Previous Tab is" + previousTab);
+});
