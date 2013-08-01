@@ -8,6 +8,10 @@ Download: https://chrome.google.com/webstore/detail/toggle-switch-recent-last/od
 Changelog
 =========
 
+**1.4**
+
+- On tab closure jump back to the previous one before that.
+
 **1.3**
 
 - Minor fixes
