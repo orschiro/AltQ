@@ -8,6 +8,11 @@ Download: https://chrome.google.com/webstore/detail/toggle-switch-recent-last/od
 Changelog
 =========
 
+**1.4.1**
+
+ - Removed unneeded permissions
+ - Attempt to fix problem when default shortcut is not set.
+
 **1.4**
 
 - On tab closure jump back to the previous one before that.
