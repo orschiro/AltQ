@@ -8,6 +8,10 @@ Download: https://chrome.google.com/webstore/detail/toggle-switch-recent-last/od
 Changelog
 =========
 
+**1.4.2**
+
+ - Reverted back to toggle command instead of browser action
+
 **1.4.1**
 
  - Removed unneeded permissions
