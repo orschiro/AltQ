@@ -1,49 +1,51 @@
-var previousPreviousTab;
-var wasRemoved;
-var previousTab;
-var currentTab;
+var currentTab = null;
+var previousTabs = [];
 
-// Update variables on tab creation
-chrome.tabs.onCreated.addListener(function(tabId, changeInfo, tab) {
-    previousPreviousTab = previousTab;
-    // console.log("Previous Previous Tab is" + previousPreviousTab);
-    // console.log("Previous Tab is" + previousTab);
-});
-
-// Update variables on tab removal
-chrome.tabs.onRemoved.addListener(function(tabId, changeInfo, tab) {
-    previousTab = previousPreviousTab;
-    wasRemoved = true;
-    // console.log("Previous Previous Tab is" + previousPreviousTab);
-    // console.log("Previous Tab is" + previousTab);
+// set current tab on load
+chrome.tabs.getSelected(chrome.windows.WINDOW_ID_CURRENT, function(tab) {
+  currentTab = tab.id;
 });
 
 // Update variables on tab change
 chrome.tabs.onSelectionChanged.addListener(function(tab) {
-    if (previousTab == null) {
-        previousTab = tab;
-    }
-    if (currentTab == null) {
-        currentTab = tab;
-    }
-    else if (wasRemoved == true) {
-        currentTab = tab;
-        wasRemoved = false;
-    }
-    else {
-        previousTab = currentTab;
-        currentTab = tab;
-    }
+    previousTabs.push(currentTab);
+    currentTab = tab;
+
+    // console.log('current', currentTab, 'previous', previousTab);
+    // console.log('previousTabs', previousTabs);
 });
 
 // Switch tab on button click
-chrome.browserAction.onClicked.addListener(function(tab) {
-    chrome.tabs.update(previousTab, {selected: true});
+chrome.browserAction.onClicked.addListener(function() {
+    switchToPreviousTab();
 });
 
 // Keyboard shortcut toggle function
 chrome.commands.onCommand.addListener(function(command) {
   if (command == "toggle") {
-    chrome.tabs.update(previousTab, {selected: true});
+    switchToPreviousTab();
   }
 });
+
+function switchToPreviousTab() {
+    // find next tab which is not current, sometimes the next valid
+    // tab is the current one, if neighbour was closed
+    var nextTab;
+    while (previousTabs.length) {
+       nextTab = previousTabs.pop();
+       if (nextTab !== currentTab) {
+            break;
+       }
+    }
+
+    if (!nextTab) {
+        return;
+    }
+
+    // console.log('switching to', nextTab);
+    chrome.tabs.update(nextTab, {selected: true}, function () {
+        if (chrome.runtime.lastError && previousTabs.length) { // invalid tab, try next one
+            return switchToPreviousTab();
+        }
+    });
+}
