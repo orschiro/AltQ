@@ -7,7 +7,7 @@
 	},
 	"name": "Toggle Switch Recent Last Tabs",
 	"short_name": "TSRLT",
-	"version": "1.4.2",
+	"version": "1.5",
 	"manifest_version": 2,
 	"description": "Toggle between your current and last used (focused) tab with a keyboard shortcut (ALT+Q by default) or mouse click on the icon.",
 	"browser_action": {
