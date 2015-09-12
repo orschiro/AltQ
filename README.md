@@ -1,9 +1,16 @@
-Toggle-Switch-Recent-Last-Tabs
+Toggle Switch Recent Last Tabs (tsrlt)
 ==============================
 
-Chrome extension to Toggle between your current and last used (focused) tab with a keyboard shortcut (ALT+Q by default) or mouse click on the icon.
+A Chrome extension to toggle between your current and last used (focused) tab with a keyboard shortcut (ALT+Q by default) or mouse click on the icon.
 
-Download: https://chrome.google.com/webstore/detail/toggle-switch-recent-last/odhjcgnlbagjllfbilicalpigimhdcll
+Download: [Chrome Webstore](https://chrome.google.com/webstore/detail/toggle-switch-recent-last/odhjcgnlbagjllfbilicalpigimhdcll)
+
+Gratitude
+=========
+
+tsrlt is made possible thanks to the contribution of: 
+
+* [Bibernull](https://github.com/Bibernull)
 
 Changelog
 =========
