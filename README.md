@@ -8,6 +8,11 @@ Download: https://chrome.google.com/webstore/detail/toggle-switch-recent-last/od
 Changelog
 =========
 
+**1.6**
+
+ - Implemented tab history per window
+ - Each tab id appears only once in history, this prevents duplicates, and unnecessarily big history array
+
 **1.5**
 
  - Implemented tab history, keep track of tab switch order
