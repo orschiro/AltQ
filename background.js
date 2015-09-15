@@ -96,9 +96,12 @@ function switchToPreviousTabCallback() {
 }
 
 function switchToPreviousTab(previousTabs) {
-  var nextTab = previousTabs.pop();
-  if (!nextTab) {
-    return;
+  var nextTab;
+  while (previousTabs.length) {
+    nextTab = previousTabs.pop();
+    if (nextTab !== currentTab) {
+      break;
+    }
   }
 
   chrome.tabs.update(nextTab, {selected: true}, function () {
