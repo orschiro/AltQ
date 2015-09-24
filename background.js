@@ -1,4 +1,6 @@
 var currentTab = null;
+var removedTab = null;
+var switchToLastTabOnExit = false;
 var previousTabsByWindow = {};
 
 // set current tab and window on load
@@ -22,6 +24,19 @@ chrome.commands.onCommand.addListener(function(command) {
     switchToPreviousTabCallback();
   }
 });
+
+
+function getSettings() {
+    var settings = localStorage.getItem('tsrltSettings');
+
+    if (settings !== null && settings !== 'null') {
+        settings = JSON.parse(settings);
+    } else {
+        settings = {switchOnClose: false};
+        localStorage.setItem('tsrltSettings', JSON.stringify(settings));
+    }
+    return settings;
+}
 
 function getPreviousTabs(callback) { // get _current_ window tabs from previousTabsByWindow
   return getCurrentWindow(function (window) {
@@ -53,6 +68,8 @@ function initializeWindow(wId, callback) {
     var wKey = getWKey(wId);
     currentTab = tab;
     previousTabsByWindow[wKey] = [currentTab];
+    var settings = getSettings();
+    switchToLastTabOnExit = settings.switchOnClose;
     callback && callback(previousTabsByWindow[wKey]);
   });
 }
@@ -67,12 +84,12 @@ function windowRemovedCallback(wId) {
 }
 
 function tabRemovedCallback(removedId) {
+  removedTab = removedId;
   getPreviousTabs(function (previousTabs) {
       removeTab(previousTabs, removedId);
   });
 }
 
-// also removes duplicates
 function removeTab(previousTabs, removedId) {
   var index = previousTabs.indexOf(removedId);
   if (index !== -1) {
@@ -83,7 +100,16 @@ function removeTab(previousTabs, removedId) {
 function selectionChangedCallback(tab) {
   getPreviousTabs(function (previousTabs) {
     removeTab(previousTabs, currentTab);
-    previousTabs.push(currentTab);
+    var lastTab = previousTabs[previousTabs.length - 1] || tab;
+
+    if (currentTab !== removedTab) {
+      previousTabs.push(currentTab);
+    } else {
+      removedTab = null;
+      if (lastTab !== tab && switchToLastTabOnExit) {
+        return switchToPreviousTab(previousTabs);
+      }
+    }
 
     currentTab = tab;
   });
