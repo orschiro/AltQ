@@ -8,6 +8,11 @@ Download: https://chrome.google.com/webstore/detail/toggle-switch-recent-last/od
 Changelog
 =========
 
+**1.6.2**
+
+ - Added an option page
+ - Added an option to switch to last focused tab after closing an active tab
+
 **1.6.1**
 
  - Fixed a bug where the next tab is the current after closing an active tab
