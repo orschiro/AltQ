@@ -8,6 +8,10 @@ Download: https://chrome.google.com/webstore/detail/toggle-switch-recent-last/od
 Changelog
 =========
 
+**1.6.3**
+
+ - Set removedTab to null on every switch - fixes #7
+
 **1.6.2**
 
  - Added an option page
