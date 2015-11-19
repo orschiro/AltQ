@@ -110,7 +110,7 @@ function selectionChangedCallback(tab) {
         return switchToPreviousTab(previousTabs);
       }
     }
-
+    removedTab = null;
     currentTab = tab;
   });
 }
