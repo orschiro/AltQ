@@ -1,19 +1,28 @@
 Toggle Switch Recent Last Tabs (tsrlt)
 ==============================
 
-A Chrome extension to toggle between your current and last used (focused) tab with a keyboard shortcut (ALT+Q by default) or mouse click on the icon.
+A Google Chrome extension to switch back and forth between your current and last recently used tab by pressing Alt + q on your keyboard.
 
 Download: [Latest releases](https://github.com/orschiro/tsrlt-chrome-extension/releases)
 
-Gratitude
+Support
+=======
+
+Please either write me an [email](http://www.orzanna.de/email.png) or submit an [issue](https://github.com/orschiro/tsrlt-chrome-extension/issues/new).
+
+Appraisal
 =========
 
-tsrlt is made possible thanks to the contribution of: 
+tsrlt is made possible thanks to the contribution of:
 
 * [Bibernull](https://github.com/Bibernull)
 
 Changelog
 =========
+
+**1.6.4**
+
+- Some minor corrections in the text
 
 **1.6.3**
 
