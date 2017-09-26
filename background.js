@@ -1,6 +1,24 @@
+chrome.runtime.onMessage.addListener((message) => {
+    chrome.tabs.query(
+        {
+            active: true,
+            currentWindow: true,
+        },
+        (tabs) => {
+            chrome.tabs.create(
+                {
+                    url: message.url,
+                    active: message.openInForeground,
+                    openerTabId: tabs[0].id,
+                }
+            );
+        }
+    );
+});
+
 var currentTab = null;
 var removedTab = null;
-var switchToLastTabOnExit = false;
+var switchToLastTabOnExit = true;
 var previousTabsByWindow = {};
 
 // set current tab and window on load

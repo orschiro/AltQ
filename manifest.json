@@ -1,18 +1,15 @@
 {
-"update_url":"http://clients2.google.com/service/update2/crx",
-
 	"background": {
 		"scripts": ["background.js"],
         "persistent": true
 	},
-    "options_page": "options.html",
 	"name": "Toggle Switch Recent Last Tabs",
 	"short_name": "TSRLT",
-	"version": "1.6.4",
+	"version": "3",
 	"manifest_version": 2,
-	"description": "Switch back and forth between your current and last recently used tab by pressing Alt + q on your keyboard.",
+	"description": "Switch back and forth between your current and last recently used tab by pressing Alt + Q on your keyboard.",
 	"browser_action": {
-		"default_title": "Toggle tabs",
+		"default_title": "Toggle Tabs",
 		"default_icon": "icon.png"
 	},
 	"commands": {
@@ -20,7 +17,7 @@
 			"suggested_key": {
 				"default": "Alt+Q"
 			},
-			"description": "Toggle tabs"
+			"description": "Toggle Tabs"
 		}
 	},
 	"permissions": [
@@ -30,6 +27,6 @@
 		"16": "icon_16.png",
 		"32": "icon_32.png",
 		"48": "icon_48.png",
-		"128": "icon_48.png"
+		"128": "icon_128.png"
 	}
 }
