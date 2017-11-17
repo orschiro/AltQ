@@ -1,0 +1,8 @@
+{
+  "appName": {
+    "message": "Alternar últimas pestañas recientes"
+  },
+  "appDesc": {
+    "message": "Cambia entre la pestaña actual y la última que usaste recientemente presionando Alt + Q en tu teclado."
+  }
+}

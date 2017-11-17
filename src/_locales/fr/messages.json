@@ -1,0 +1,8 @@
+{
+  "appName": {
+    "message": "Basculer entre les derniers onglets récents"
+  },
+  "appDesc": {
+    "message": "Basculez entre votre dernier onglet actuel et dernier en appuyant sur Alt + Q sur votre clavier."
+  }
+}

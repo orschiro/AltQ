@@ -1,0 +1,8 @@
+{
+  "appName": {
+    "message": "Toggle Switch Recent Last Tabs"
+  },
+  "appDesc": {
+    "message": "Switch back and forth between your current and last recently used tab by pressing Alt + Q on your keyboard."
+  }
+}
