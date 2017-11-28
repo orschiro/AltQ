@@ -1,0 +1,8 @@
+{
+  "appName": {
+    "message": "Toggle Switch recente Última Tabs"
+  },
+  "appDesc": {
+    "message": "Alternar entre a sua guia atual e a última guia usada recentemente, pressionando Alt + Q no seu teclado."
+  }
+}

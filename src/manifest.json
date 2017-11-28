@@ -7,7 +7,7 @@
 	"description": "__MSG_appDesc__",
 	"default_locale": "en",
 	"short_name": "TSRLT",
-	"version": "4",
+	"version": "6",
 	"manifest_version": 2,
 	"browser_action": {
 		"default_title": "Toggle Tabs",
