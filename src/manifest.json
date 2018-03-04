@@ -6,7 +6,7 @@
 	"name": "__MSG_appName__",
 	"description": "__MSG_appDesc__",
 	"default_locale": "en",
-	"short_name": "TSRLT",
+	"short_name": "Toggle recently used",
 	"version": "7",
 	"manifest_version": 2,
 	"browser_action": {

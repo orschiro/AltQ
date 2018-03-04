@@ -1,10 +1,10 @@
 {
   "appName": {
-    "message": "Toggle Switch Recent Last Tabs",
-    "description": "Switch back and forth between your current and last recently used tab by pressing Alt + Q on your keyboard."
+    "message": "Toggle most recently used tabs in window",
+    "description": "Toggle between your two most recently used tabs in your current window by pressing Alt + Q. Doesn't support multiple windows."
   },
   "appDesc": {
-    "message": "Toggle Switch Recent Last Tabs", 
-    "description":"Switch back and forth between your current and last recently used tab by pressing Alt + Q on your keyboard."
+    "message": "Toggle recently used tabs in window",
+    "description":"Toggle between your two most recently used tabs in your current window by pressing Alt + Q. Doesn't support multiple windows."
   }
 }
