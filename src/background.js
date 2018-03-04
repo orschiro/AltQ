@@ -1,31 +1,11 @@
-chrome.runtime.onMessage.addListener((message) => {
-    chrome.tabs.query(
-        {
-            active: true,
-            currentWindow: true,
-        },
-        (tabs) => {
-            chrome.tabs.create(
-                {
-                    url: message.url,
-                    active: message.openInForeground,
-                    openerTabId: tabs[0].id,
-                }
-            );
-        }
-    );
-});
-
+// Initialise variables
 var currentTab = null;
 var removedTab = null;
-var switchToLastTabOnExit = true;
+// var switchToLastTabOnExit = true;
 var previousTabsByWindow = {};
 
 // set current tab and window on load
 initializeWindow();
-
-// Update variables on tab removed
-chrome.tabs.onRemoved.addListener(tabRemovedCallback);
 
 // Update variables on window removed
 chrome.windows.onRemoved.addListener(windowRemovedCallback);
@@ -35,26 +15,6 @@ chrome.tabs.onSelectionChanged.addListener(selectionChangedCallback);
 
 // Switch tab on button click
 chrome.browserAction.onClicked.addListener(switchToPreviousTabCallback);
-
-// Keyboard shortcut toggle function
-chrome.commands.onCommand.addListener(function(command) {
-  if (command == "toggle") {
-    switchToPreviousTabCallback();
-  }
-});
-
-
-function getSettings() {
-    var settings = localStorage.getItem('tsrltSettings');
-
-    if (settings !== null && settings !== 'null') {
-        settings = JSON.parse(settings);
-    } else {
-        settings = {switchOnClose: false};
-        localStorage.setItem('tsrltSettings', JSON.stringify(settings));
-    }
-    return settings;
-}
 
 function getPreviousTabs(callback) { // get _current_ window tabs from previousTabsByWindow
   return getCurrentWindow(function (window) {
@@ -86,8 +46,6 @@ function initializeWindow(wId, callback) {
     var wKey = getWKey(wId);
     currentTab = tab;
     previousTabsByWindow[wKey] = [currentTab];
-    var settings = getSettings();
-    switchToLastTabOnExit = settings.switchOnClose;
     callback && callback(previousTabsByWindow[wKey]);
   });
 }
