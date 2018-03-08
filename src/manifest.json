@@ -6,11 +6,11 @@
 	"name": "__MSG_appName__",
 	"description": "__MSG_appDesc__",
 	"default_locale": "en",
-	"short_name": "Toggle recently used",
-	"version": "7",
+	"short_name": "Switch recently used tabs",
+	"version": "9",
 	"manifest_version": 2,
 	"browser_action": {
-		"default_title": "Toggle Tabs",
+		"default_title": "Switch Tabs",
 		"default_icon": "icon.png"
 	},
 	"commands": {
