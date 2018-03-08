@@ -1,7 +1,7 @@
-Switch between your recent tabs in Chrome pressing Alt + Q on your keyboard
+Switch between your recent tabs in Chrome
 ===========================================================================
 
-A Google Chrome extension to switch between your recently used tabs from the keyboard. 
+A Google Chrome extension to switch between your recently used tabs pressing Alt + Q on your keyboard.
 
 Installation
 ============
@@ -14,4 +14,4 @@ Contributors
 
 * [orschiro](https://github.com/orschiro)
 * [Bibernull](https://github.com/Bibernull)
-* [frankyjuang]](https://github.com/frankyjuang)
+* [frankyjuang](https://github.com/frankyjuang)
