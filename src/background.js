@@ -1,15 +1,13 @@
-var previousTab;
-var currentTab;
-var previousTabBackup;
-var currentTabBackup;
+let previousTab;
+let currentTab;
 
 function init() {
 	chrome.tabs.query({
 		active: true,
 		lastFocusedWindow: true,
 	}, function(tab) {
-		previousTab = tab[0].id;
-		currentTab = null;
+		previousTab = null;
+		currentTab = tab[0].id;
 	});
 }
 
@@ -18,25 +16,8 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 });
 
 chrome.tabs.onActivated.addListener(function(info) {
-	if (previousTab == null) {
-		previousTab = info.tab;
-	}
-	if (currentTab == null) {
-		currentTab = info.tab;
-	} else {
-		previousTab = currentTab;
-		currentTab = info.tab;
-	}
-});
-
-chrome.windows.onCreated.addListener(function(tab) {
-	previousTabBackup = previousTab;
-	currentTabBackup = currentTab;
-});
-
-chrome.windows.onRemoved.addListener(function(tab) {
-	previousTab = previousTabBackup;
-	currentTab = currentTabBackup;
+	previousTab = currentTab;
+	currentTab = info.tabId;
 });
 
 init();
