@@ -1,14 +1,14 @@
 let tabHistory = {};
 let currentTabId;
 let currentTabJustRemoved = false; // No-use if `defaultTabClosingBehavior`.
-let defaultTabClosingBehavior = false;
+let defaultTabClosingBehavior = true;
 
 function init() {
 	tabHistory[-1] = {id: null}; // Dummy start.
 	chrome.contextMenus.create({
 		type: "checkbox",
 		title: "Go to previously viewed tab after closing current one",
-		checked: true,
+		checked: false,
 		contexts: ["browser_action"],
 		onclick: function(info, tab) {
 			defaultTabClosingBehavior = !info.checked;
