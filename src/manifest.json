@@ -21,6 +21,7 @@
 	}
 	},
 	"permissions": [
+        "contextMenus",
 		"tabs"
 	],
 	"icons": {

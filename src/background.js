@@ -1,9 +1,20 @@
 let tabHistory = {};
 let currentTabId;
-let currentTabJustRemoved = false;
+let currentTabJustRemoved = false; // No-use if `defaultTabClosingBehavior`.
+let defaultTabClosingBehavior = true;
 
 function init() {
 	tabHistory[-1] = {id: null}; // Dummy start.
+	chrome.contextMenus.create({
+		type: "checkbox",
+		title: "Go to previously viewed tab after closing current one",
+		checked: false,
+		contexts: ["browser_action"],
+		onclick: function(info, tab) {
+			defaultTabClosingBehavior = !info.checked;
+		},
+	});
+
 	chrome.tabs.query({
 		active: true,
 		lastFocusedWindow: true,
@@ -27,9 +38,10 @@ chrome.tabs.onActivated.addListener(function(info) {
 	// first switches to its default tab. Then, we switch to our last tab which
 	// can be identified with `currentTabId`.
 	if (currentTabJustRemoved) {
-		if (info.tabId === currentTabId) {
-			currentTabJustRemoved = false;
-		}
+		currentTabJustRemoved = false;
+		return;
+	}
+	if (info.tabId === currentTabId) {
 		return;
 	}
 
@@ -59,9 +71,11 @@ chrome.tabs.onRemoved.addListener(function(tabId, info) {
 		if (tabId === currentTabId) {
 			// Current tab is removed. Switch to the last tab.
 			delete removedTab.prev.next;
-			currentTabJustRemoved = true;
 			currentTabId = removedTab.prev.id;
-			chrome.tabs.update(currentTabId, {active: true});
+			if (!defaultTabClosingBehavior) {
+				currentTabJustRemoved = true;
+				chrome.tabs.update(currentTabId, {active: true});
+			}
 		} else {
 			removedTab.prev.next = removedTab.next;
 			removedTab.next.prev = removedTab.prev;
