@@ -45,7 +45,7 @@ chrome.tabs.onActivated.addListener(function(info) {
 		return;
 	}
 
-	let prevTabId = currentTabId;
+	let prevTabId = currentTabId || -1; // Might be dummy start.
 	currentTabId = info.tabId;
 
 	if (!tabHistory.hasOwnProperty(currentTabId)) { // Newly visited tab.
@@ -72,7 +72,7 @@ chrome.tabs.onRemoved.addListener(function(tabId, info) {
 			// Current tab is removed. Switch to the last tab.
 			delete removedTab.prev.next;
 			currentTabId = removedTab.prev.id;
-			if (!defaultTabClosingBehavior) {
+			if (!defaultTabClosingBehavior && currentTabId) {
 				currentTabJustRemoved = true;
 				chrome.tabs.update(currentTabId, {active: true});
 			}
