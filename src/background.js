@@ -33,10 +33,6 @@ function init() {
 	});
 
 	chrome.windows.getLastFocused({}, async function(win) {
-		if (!win.focused) {
-			console.error(win);
-			return;
-		}
 		currentWindowId = win.id;
 		currentTabId = await resolveCurrentTabId();
 		populateCurrentWindow();
@@ -51,7 +47,6 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 });
 
 chrome.tabs.onActivated.addListener(function(info) {
-	console.log("ACT", info);
 	// After current tab is closed, this listener is triggered twice. Chrome
 	// first switches to its default tab. Then, we switch to our last tab which
 	// can be identified with `currentTabId`.
@@ -89,17 +84,11 @@ chrome.tabs.onActivated.addListener(function(info) {
 	validateHistory();
 });
 
-chrome.tabs.onAttached.addListener(function(tabId, info) {
-	console.log("ATT");
-});
-
 chrome.tabs.onDetached.addListener(function(tabId, info) {
-	console.log("DET");
 	removeTabFromWindow(info.oldWindowId, tabId);
 });
 
 chrome.tabs.onRemoved.addListener(function(tabId, info) {
-	console.log("TRM");
 	if (info.isWindowClosing) {
 		return;
 	}
@@ -107,7 +96,6 @@ chrome.tabs.onRemoved.addListener(function(tabId, info) {
 });
 
 chrome.windows.onFocusChanged.addListener(async function(windowId) {
-	console.log("FOC");
 	if (currentWindowId !== -1) {
 		// Save currentTabId.
 		windows[currentWindowId].currentTabId = currentTabId;
@@ -128,20 +116,8 @@ chrome.windows.onFocusChanged.addListener(async function(windowId) {
 });
 
 chrome.windows.onRemoved.addListener(function(windowId) {
-	console.log("WRM");
 	delete windows[windowId];
 });
-
-function resolveCurrentTabId() {
-	return new Promise(function(resolve) {
-		chrome.tabs.query({
-			active: true,
-			windowId: currentWindowId,
-		}, function(tab) {
-			resolve(tab[0].id);
-		});
-	});
-}
 
 function populateCurrentWindow() {
 	let tabHistory = {};
@@ -171,6 +147,25 @@ function removeTabFromWindow(windowId, tabId) {
 	}
 }
 
+function resolveCurrentTabId() {
+	return new Promise(function(resolve) {
+		chrome.tabs.query({
+			active: true,
+			windowId: currentWindowId,
+		}, function(tab) {
+			resolve(tab[0].id);
+		});
+	});
+}
+
+function validateAllHistory() {
+	for (let windowId in windows) {
+		if (windows.hasOwnProperty(windowId)) {
+			validateHistory(windowId);
+		}
+	}
+}
+
 function validateHistory(windowId) {
 	windowId = windowId || currentWindowId;
 	let currentTab = windows[windowId].tabHistory[-1];
@@ -185,14 +180,6 @@ function validateHistory(windowId) {
 		path = path + " => " + currentTab.id;
 	}
 	console.debug(path);
-}
-
-function validateAllHistory() {
-	for (let windowId in windows) {
-		if (windows.hasOwnProperty(windowId)) {
-			validateHistory(windowId);
-		}
-	}
 }
 
 init();
