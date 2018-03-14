@@ -7,7 +7,7 @@ function init() {
 	tabHistory[-1] = {id: null}; // Dummy start.
 	chrome.contextMenus.create({
 		type: "checkbox",
-		title: "Go to previously viewed tab after closing current one",
+		title: chrome.i18n.getMessage("contextMenu"),
 		checked: false,
 		contexts: ["browser_action"],
 		onclick: function(info, tab) {
