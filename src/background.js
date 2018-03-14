@@ -20,7 +20,6 @@ let currentTabJustRemoved = false; // No-use if `defaultTabClosingBehavior`.
 let defaultTabClosingBehavior = true;
 
 // TODO: chrome.runtime.onInstalled.addListener(function callback)
-// TODO: tab moved?
 
 function init() {
 	chrome.contextMenus.create({
@@ -52,7 +51,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 });
 
 chrome.tabs.onActivated.addListener(function(info) {
-	console.log("ACT");
+	console.log("ACT", info);
 	// After current tab is closed, this listener is triggered twice. Chrome
 	// first switches to its default tab. Then, we switch to our last tab which
 	// can be identified with `currentTabId`.
@@ -90,39 +89,35 @@ chrome.tabs.onActivated.addListener(function(info) {
 	validateHistory();
 });
 
+chrome.tabs.onAttached.addListener(function(tabId, info) {
+	console.log("ATT");
+});
+
+chrome.tabs.onDetached.addListener(function(tabId, info) {
+	console.log("DET");
+	removeTabFromWindow(info.oldWindowId, tabId);
+});
+
 chrome.tabs.onRemoved.addListener(function(tabId, info) {
 	console.log("TRM");
 	if (info.isWindowClosing) {
 		return;
 	}
-	let tabHistory = windows[info.windowId].tabHistory;
-	if (tabHistory.hasOwnProperty(tabId)) { // Visited tab.
-		// Remove tab from `tabHistory`.
-		let removedTab = tabHistory[tabId];
-		if (tabId === currentTabId) {
-			// Current tab is removed. Switch to the last tab.
-			delete removedTab.prev.next;
-			currentTabId = removedTab.prev.id;
-			if (!defaultTabClosingBehavior && currentTabId) {
-				currentTabJustRemoved = true;
-				chrome.tabs.update(currentTabId, {active: true});
-			}
-		} else {
-			removedTab.prev.next = removedTab.next;
-			removedTab.next.prev = removedTab.prev;
-		}
-		delete tabHistory[tabId];
-	}
-	validateHistory();
+	removeTabFromWindow(info.windowId, tabId);
 });
 
 chrome.windows.onFocusChanged.addListener(async function(windowId) {
 	console.log("FOC");
-	if (windowId === -1 || windowId === currentWindowId) {
+	if (currentWindowId !== -1) {
+		// Save currentTabId.
+		windows[currentWindowId].currentTabId = currentTabId;
+	}
+	currentWindowId = windowId;
+	if (currentWindowId === -1) {
+		currentTabId = null;
 		return;
 	}
-	windows[currentWindowId].currentTabId = currentTabId; // Save currentTabId.
-	currentWindowId = windowId;
+
 	if (!windows.hasOwnProperty(currentWindowId)) { // Newly visited window.
 		currentTabId = await resolveCurrentTabId();
 		populateCurrentWindow();
@@ -154,6 +149,26 @@ function populateCurrentWindow() {
 	tabHistory[currentTabId] = {id: currentTabId, prev: tabHistory[-1]};
 	tabHistory[-1].next = tabHistory[currentTabId];
 	windows[currentWindowId] = {tabHistory: tabHistory};
+}
+
+function removeTabFromWindow(windowId, tabId) {
+	let tabHistory = windows[windowId].tabHistory;
+	if (tabHistory.hasOwnProperty(tabId)) { // Visited tab.
+		let removingTab = tabHistory[tabId];
+		if (tabId === currentTabId) {
+			// Remove current tab, and switch to the last tab.
+			delete removingTab.prev.next;
+			currentTabId = removingTab.prev.id;
+			if (!defaultTabClosingBehavior && currentTabId) {
+				currentTabJustRemoved = true;
+				chrome.tabs.update(currentTabId, {active: true});
+			}
+		} else {
+			removingTab.prev.next = removingTab.next;
+			removingTab.next.prev = removingTab.prev;
+		}
+		delete tabHistory[tabId];
+	}
 }
 
 function validateHistory(windowId) {
