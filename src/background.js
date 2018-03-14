@@ -1,3 +1,18 @@
+/*
+ * windows object
+ *     {windowId}
+ *         currentTabId
+ *         tabHistory
+ *             "-1"
+ *                 tab object (dummy start)
+ *             {tabId}
+ *                 tab object
+ *
+ * tab object
+ *     id
+ *     prev
+ *     next
+ */
 let windows = {};
 let currentWindowId;
 let currentTabId;
