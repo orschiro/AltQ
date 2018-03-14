@@ -6,5 +6,9 @@
   "appDesc": {
     "message": "Switch recently used tabs in window",
     "description":"Switch between your two most recently used tabs in your current window by pressing Alt + Q. Doesn't support multiple windows."
+  },
+  "defaultTitle": {
+    "message": "Switch tabs",
+    "description": "Switch tabs"
   }
 }
