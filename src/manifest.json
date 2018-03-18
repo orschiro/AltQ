@@ -1,7 +1,7 @@
 {
 	"background": {
 		"scripts": ["background.js"],
-        "persistent": true
+		"persistent": true
 	},
 	"name": "__MSG_appName__",
 	"description": "__MSG_appDesc__",
@@ -15,13 +15,13 @@
 	},
 	"commands": {
 		"_execute_browser_action": {
-		      "suggested_key": {
-		        "default": "Alt+Q"
-		      }
-	}
+			"suggested_key": {
+				"default": "Alt+Q"
+			}
+		}
 	},
 	"permissions": [
-    "contextMenus",
+		"contextMenus",
 		"tabs"
 	],
 	"icons": {
