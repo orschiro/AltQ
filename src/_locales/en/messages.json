@@ -10,5 +10,9 @@
   "defaultTitle": {
     "message": "Switch tabs",
     "description": "Switch tabs"
+  },
+  "contextMenu": {
+    "message": "Go to previously viewed tab after closing current one",
+    "description": "Option name for tab closing behavior in context menu"
   }
 }
