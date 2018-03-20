@@ -19,7 +19,29 @@ let currentTabId;
 let currentTabJustRemoved = false; // No-use if `defaultTabClosingBehavior`.
 let defaultTabClosingBehavior = true;
 
-// TODO: chrome.runtime.onInstalled.addListener(function callback)
+chrome.runtime.onInstalled.addListener(function(info) {
+	let newVersion = +chrome.runtime.getManifest().version;
+	let title;
+	if (info.reason === "install") {
+		title = "Switch Recent Tabs is all set";
+	} else if (info.reason === "update") {
+		title = "You just update to version " + newVersion;
+	} else {
+		return;
+	}
+	let message;
+	if (newVersion >= 11) {
+		message = "Support multiple windows now!";
+	} else {
+		message = "Storm between tabs with Alt-Q now!";
+	}
+	chrome.notifications.create({
+		type: "basic",
+		iconUrl: "icon_128.png",
+		title: title,
+		message: message,
+	});
+});
 
 function init() {
 	chrome.contextMenus.create({
