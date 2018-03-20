@@ -22,6 +22,7 @@
 	},
 	"permissions": [
 		"contextMenus",
+		"notifications",
 		"tabs"
 	],
 	"icons": {
