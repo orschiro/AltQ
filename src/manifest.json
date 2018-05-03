@@ -6,8 +6,8 @@
 	"name": "__MSG_appName__",
 	"description": "__MSG_appDesc__",
 	"default_locale": "en",
-	"short_name": "Switch recently used tabs",
-	"version": "10",
+	"short_name": "Switch Recent Tabs",
+	"version": "11",
 	"manifest_version": 2,
 	"browser_action": {
 		"default_title": "__MSG_defaultTitle__",

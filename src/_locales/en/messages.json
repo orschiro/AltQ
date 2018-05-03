@@ -1,11 +1,11 @@
 {
   "appName": {
-    "message": "Switch most recently used tabs in window",
-    "description": "Switch between your two most recently used tabs in your current window by pressing Alt + Q. Doesn't support multiple windows."
+    "message": "Switch Recent Tabs",
+    "description": "Switch Recent Tabs"
   },
   "appDesc": {
-    "message": "Switch recently used tabs in window",
-    "description":"Switch between your two most recently used tabs in your current window by pressing Alt + Q. Doesn't support multiple windows."
+    "message": "With Alt + Q",
+    "description":"With Alt + Q"
   },
   "defaultTitle": {
     "message": "Switch tabs",
