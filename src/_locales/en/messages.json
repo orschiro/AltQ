@@ -1,18 +1,14 @@
 {
   "appName": {
-    "message": "Switch Recent Tabs",
-    "description": "Switch Recent Tabs"
+    "message": "Switch Recent Tabs"
   },
   "appDesc": {
-    "message": "With Alt + Q",
-    "description":"With Alt + Q"
+    "message": "With Alt + Q"
   },
   "defaultTitle": {
-    "message": "Switch tabs",
-    "description": "Switch tabs"
+    "message": "Switch tabs"
   },
   "contextMenu": {
-    "message": "Go to previously viewed tab after closing current one",
-    "description": "Option name for tab closing behavior in context menu"
+    "message": "Go to previously viewed tab after closing current one"
   }
 }

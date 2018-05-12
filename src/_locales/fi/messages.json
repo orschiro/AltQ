@@ -1,0 +1,14 @@
+{
+  "appName": {
+    "message": "Vaihda viimeisimmät välilehdet"
+  },
+  "appDesc": {
+    "message": "Kanssa Alt + Q"
+  },
+  "defaultTitle": {
+    "message": "Vaihda välilehdet"
+  },
+  "contextMenu": {
+    "message": "Siirry aiemmin katsotulle välilehdelle sulkemisen jälkeen"
+  }
+}
