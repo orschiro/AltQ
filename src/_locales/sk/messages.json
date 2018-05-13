@@ -1,0 +1,14 @@
+{
+  "appName": {
+    "message": "Prepínajte posledné karty"
+  },
+  "appDesc": {
+    "message": "s Alt + Q"
+  },
+  "defaultTitle": {
+    "message": "Prepínajte záložky"
+  },
+  "contextMenu": {
+    "message": "Prejdite na predchádzajúcu kartu po zatvorení aktuálnej karty"
+  }
+}

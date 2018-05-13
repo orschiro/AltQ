@@ -1,8 +1,14 @@
 {
   "appName": {
-    "message": "Przełącz Przełącz Ostatnie ostatnie karty"
+    "message": "Zmień ostatnie karty"
   },
   "appDesc": {
-    "message": "Przełączaj się pomiędzy bieżącą a ostatnią ostatnio używaną kartą, naciskając klawisze Alt + Q na klawiaturze."
+    "message": "Z Alt + Q"
+  },
+  "defaultTitle": {
+    "message": "Przełącz karty"
+  },
+  "contextMenu": {
+    "message": "Przejdź do poprzednio oglądanej karty po zamknięciu bieżącego"
   }
 }

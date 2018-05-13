@@ -1,0 +1,14 @@
+{
+  "appName": {
+    "message": "Byt senaste flikar"
+  },
+  "appDesc": {
+    "message": "Med Alt + Q"
+  },
+  "defaultTitle": {
+    "message": "Byt flikar"
+  },
+  "contextMenu": {
+    "message": "Gå till tidigare visade flik när du stängt den aktuella"
+  }
+}
