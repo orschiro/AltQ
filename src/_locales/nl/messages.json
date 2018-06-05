@@ -1,8 +1,14 @@
 {
   "appName": {
-    "message": "Toggle Switch Recent Last Tabs"
+    "message": "Schakelaar Recente Tabbladen"
   },
   "appDesc": {
-    "message": "Schakel heen en weer tussen uw huidige en laatst recent gebruikte tabblad door op Alt + Q op uw toetsenbord te drukken."
+    "message": "Middels Alt + Q"
+  },
+  "defaultTitle": {
+    "message": "Tabbladen wisselen"
+  },
+  "contextMenu": {
+    "message": "Ga naar eerder bekeken tabblad na het sluiten van de huidige"
   }
 }
