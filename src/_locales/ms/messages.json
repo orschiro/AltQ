@@ -1,0 +1,14 @@
+{
+  "appName": {
+    "message": "Tukar Tab Terkini"
+  },
+  "appDesc": {
+    "message": "Dengan Alt + Q"
+  },
+  "defaultTitle": {
+    "message": "Tukar tab"
+  },
+  "contextMenu": {
+    "message": "Pergi ke tab sebelumnya yang dilihat selepas menutup semasa"
+  }
+}
