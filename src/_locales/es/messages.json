@@ -1,8 +1,14 @@
 {
   "appName": {
-    "message": "Alternar últimas pestañas recientes"
+    "message": "Cambiar entre las últimas pestañas"
   },
   "appDesc": {
-    "message": "Cambia entre la pestaña actual y la última que usaste recientemente presionando Alt + Q en tu teclado."
+    "message": "Atajo: Alt + q"
+  },
+  "defaultTitle": {
+    "message": "Cambiar a la última pestaña"
+  },
+  "contextMenu": {
+    "message": "Ir a la pestaña vista previamente después de cerrar la actual"
   }
 }
