@@ -1,8 +1,14 @@
 {
   "appName": {
-    "message": "Basculer entre les derniers onglets récents"
+    "message": "Alt + Q Changer les onglets Raccourci clavier"
   },
   "appDesc": {
-    "message": "Basculez entre votre dernier onglet actuel et dernier en appuyant sur Alt + Q sur votre clavier."
+    "message": "Passez d'un onglet à l'autre à partir du clavier."
+  },
+  "defaultTitle": {
+    "message": "Onglets de commutation"
+  },
+  "contextMenu": {
+    "message": "Aller à l'onglet précédemment affiché après la fermeture de l'onglet en cours."
   }
 }
