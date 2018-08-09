@@ -1,8 +1,14 @@
 {
   "appName": {
-    "message": "Zuletzt verwendete Tabs"
+    "message": "Alt + Q Tab Wechseln Tastaturkürzel"
   },
   "appDesc": {
-    "message": "Wechseln Sie zwischen Ihrem aktuellen und zuletzt verwendeten Tab durch Drücken von Alt + Q auf Ihrer Tastatur hin und her."
+    "message": "Wechseln Sie über die Tastatur zwischen den beiden zuletzt verwendeten Registerkarten (Tabs)."
+  },
+  "defaultTitle": {
+    "message": "Tabs Wechseln"
+  },
+  "contextMenu": {
+    "message": "Wechseln Sie nach dem Schließen des aktuellen Tabs zum zuvor angezeigten Tab."
   }
 }
