@@ -1,9 +1,9 @@
 {
   "appName": {
-    "message": "Prepínajte posledné karty"
+    "message": "Záložka Alt + Q prepínač Klávesová skratka"
   },
   "appDesc": {
-    "message": "s Alt + Q"
+    "message": "Prepínanie medzi dvoma naposledy použitými kartami z klávesnice."
   },
   "defaultTitle": {
     "message": "Prepínajte záložky"
