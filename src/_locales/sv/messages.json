@@ -1,9 +1,9 @@
 {
   "appName": {
-    "message": "Byt senaste flikar"
+    "message": "Alt + Q Byt flikar Tangentbordsgenväg"
   },
   "appDesc": {
-    "message": "Med Alt + Q"
+    "message": "Växla mellan de två senast använda flikarna från tangentbordet."
   },
   "defaultTitle": {
     "message": "Byt flikar"
