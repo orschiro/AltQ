@@ -1,14 +1,14 @@
 {
   "appName": {
-    "message": "Alt + Q Switch Tabs Keyboard Shortcut"
+    "message": "Alt + Q Switch Cycle Toggle Recent Tabs"
   },
   "appDesc": {
-    "message": "Switch between the two most recently used tabs from the keyboard."
+    "message": "Switch, cycle and toggle between your two most recently used tabs by pressing Alt + Q."
   },
   "defaultTitle": {
     "message": "Switch Tabs"
   },
   "contextMenu": {
-    "message": "Go to previously viewed tab after closing current one"
+    "message": "Go to the previously viewed tab after closing the current one"
   }
 }
