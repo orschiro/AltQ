@@ -1,3 +1,6 @@
+// ExtensionPay
+const extpay = ExtPay('alt--q-switch-recent-active-tabs');
+
 let tabHistory = {};
 let currentTabId;
 let currentTabJustRemoved = false; // No-use if `defaultTabClosingBehavior`.
@@ -5,7 +8,6 @@ let defaultTabClosingBehavior = true;
 
 function init() {
 	tabHistory[-1] = {id: null}; // Dummy start.
-
 	chrome.tabs.query({
 		active: true,
 		lastFocusedWindow: true,
@@ -91,4 +93,12 @@ function validateHistory() {
 	console.debug(path);
 }
 
-init();
+// https://github.com/Glench/ExtPay#4-use-extpaygetuser-to-check-users-paid-status
+extpay.getUser().then(user => {
+	// if (user.paid) ...
+	init();
+
+}).catch(err => {
+	// do something if there's an error, probably from the network call
+	extpay.openPaymentPage();
+})   

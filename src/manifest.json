@@ -1,12 +1,12 @@
 {
 	"background": {
-		"scripts": ["background.js"],
+		"scripts": ["ExtPay.js", "background.js"],
 		"persistent": true
 	},
 	"name": "__MSG_appName__",
 	"description": "__MSG_appDesc__",
 	"default_locale": "en",
-	"version": "22",
+	"version": "23",
 	"manifest_version": 2,
 	"browser_action": {
 		"default_title": "__MSG_defaultTitle__",
@@ -24,7 +24,9 @@
 		}
 	},
 	"permissions": [
-		"activeTab"
+		"activeTab",
+		"https://extensionpay.com/*",
+        "storage"
 	],
 	"icons": {
 		"16": "icon_16.png",
