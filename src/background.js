@@ -95,10 +95,9 @@ function validateHistory() {
 
 // https://github.com/Glench/ExtPay#4-use-extpaygetuser-to-check-users-paid-status
 extpay.getUser().then(user => {
-	// if (user.paid) ...
-	init();
-
-}).catch(err => {
-	// do something if there's an error, probably from the network call
-	extpay.openPaymentPage();
-})   
+	if (user.paid) {
+	   init()
+	} else {
+	   extpay.openPaymentPage()
+	}
+ })
