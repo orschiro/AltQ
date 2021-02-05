@@ -1,0 +1,11 @@
+{
+  "appName": {
+    "message": "Alt + Q Váltás a legutóbbi lapok között"
+  },
+  "appDesc": {
+    "message": "Váltson az aktív és a legutóbb megtekintett lapok között az Alt + Q billentyűkombináció használatával!"
+  },
+  "defaultTitle": {
+    "message": "Lapok váltása"
+  }
+}
