@@ -1,0 +1,11 @@
+{
+  "appName": {
+    "message": "Alt + Q 切换近期活动标签"
+  },
+  "appDesc": {
+    "message": "使用键盘快捷键 Alt + Q 在活动选项卡和先前查看的选项卡之间切换。"
+  },
+  "defaultTitle": {
+    "message": "切换标签"
+  }
+}
