@@ -3,10 +3,17 @@
 		"scripts": ["ExtPay.js", "background.js"],
 		"persistent": true
 	},
+	"content_scripts": [
+        {
+            "matches": ["https://extensionpay.com/*"],
+            "js": ["ExtPay.js"],
+            "run_at": "document_start"
+        }
+    ],
 	"name": "__MSG_appName__",
 	"description": "__MSG_appDesc__",
 	"default_locale": "en",
-	"version": "28",
+	"version": "29",
 	"manifest_version": 2,
 	"browser_action": {
 		"default_title": "__MSG_defaultTitle__",
