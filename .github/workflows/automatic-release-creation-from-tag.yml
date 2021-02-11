@@ -1,2 +1,0 @@
-- name: GitHub Create Tag Release
-  uses: Roang-zero1/github-create-release-action@v2.1.0
