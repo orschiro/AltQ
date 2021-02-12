@@ -1,14 +1,11 @@
 {
   "appName": {
-    "message": "Alt + Q Switch Tabs Tastatursnarvei"
+    "message": "Alt + Q Bytt siste aktive faner"
   },
   "appDesc": {
-    "message": "Bytt mellom de to sist brukte fanene fra tastaturet."
+    "message": "Bytt mellom den aktive fanen og den tidligere viste en ved hjelp av hurtigtasten Alt + Q."
   },
   "defaultTitle": {
-    "message": "Bytt faner"
-  },
-  "contextMenu": {
-    "message": "Gå til tidligere viste fanen etter lukking av den nåværende"
+    "message": "Bytt fane"
   }
 }
