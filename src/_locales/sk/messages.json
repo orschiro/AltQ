@@ -1,14 +1,11 @@
 {
   "appName": {
-    "message": "Záložka Alt + Q prepínač Klávesová skratka"
+    "message": "Alt + Q Prepnúť na posledné aktívne karty"
   },
   "appDesc": {
-    "message": "Prepínanie medzi dvoma naposledy použitými kartami z klávesnice."
+    "message": "Prepínajte medzi aktívnou kartou a predtým zobrazenou pomocou klávesovej skratky Alt + Q."
   },
   "defaultTitle": {
-    "message": "Prepínajte záložky"
-  },
-  "contextMenu": {
-    "message": "Prejdite na predchádzajúcu kartu po zatvorení aktuálnej karty"
+    "message": "Prepnúť karty"
   }
 }
