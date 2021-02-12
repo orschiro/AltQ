@@ -1,14 +1,11 @@
 {
   "appName": {
-    "message": "Vaihda viimeisimmät välilehdet"
+    "message": "Alt + Q Vaihda viimeisimmät aktiiviset välilehdet"
   },
   "appDesc": {
-    "message": "Kanssa Alt + Q"
+    "message": "Vaihda aktiivisen välilehden ja aiemmin tarkastellun välilehden välillä käyttämällä pikanäppäimiä Alt + Q."
   },
   "defaultTitle": {
-    "message": "Vaihda välilehdet"
-  },
-  "contextMenu": {
-    "message": "Siirry aiemmin katsotulle välilehdelle sulkemisen jälkeen"
+    "message": "Vaihda välilehtiä"
   }
 }
