@@ -1,0 +1,11 @@
+{
+  "appName": {
+    "message": "Alt + Q Skift de seneste aktive faner"
+  },
+  "appDesc": {
+    "message": "Skift mellem din aktive fane og den tidligere viste ved hjælp af tastaturgenvejen Alt + Q."
+  },
+  "defaultTitle": {
+    "message": "Skift fane"
+  }
+}
