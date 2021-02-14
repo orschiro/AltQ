@@ -1,0 +1,11 @@
+{
+  "appName": {
+    "message": "Alt + Q Switch Recent Active Tabs"
+  },
+  "appDesc": {
+    "message": "Switch between your active tab and the previously viewed one using the keyboard shortcut Alt + Q."
+  },
+  "defaultTitle": {
+    "message": "Switch Tabs"
+  }
+}
