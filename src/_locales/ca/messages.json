@@ -1,0 +1,11 @@
+{
+  "appName": {
+    "message": "Alt + Q Canvia les pestanyes actives recents"
+  },
+  "appDesc": {
+    "message": "Canvieu entre la pestanya activa i la visualitzada anteriorment mitjançant la drecera de teclat Alt + Q."
+  },
+  "defaultTitle": {
+    "message": "Canvia de pestanya"
+  }
+}
