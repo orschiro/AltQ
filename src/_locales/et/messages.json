@@ -1,0 +1,11 @@
+{
+  "appName": {
+    "message": "Alt + Q Lülita hiljutised aktiivsed vahelehed"
+  },
+  "appDesc": {
+    "message": "Vahetage aktiivse vahelehe ja varem vaadatud vahelehe vahel, kasutades klaviatuuri otseteed Alt + Q."
+  },
+  "defaultTitle": {
+    "message": "Vahekaartide vahetamine"
+  }
+}
