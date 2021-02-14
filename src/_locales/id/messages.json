@@ -1,0 +1,11 @@
+{
+  "appName": {
+    "message": "Alt + Q Beralih Tab Aktif Terbaru"
+  },
+  "appDesc": {
+    "message": "Beralih antara tab aktif Anda dan yang sebelumnya dilihat menggunakan pintasan keyboard Alt + Q."
+  },
+  "defaultTitle": {
+    "message": "Beralih Tab"
+  }
+}
