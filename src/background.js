@@ -17,8 +17,8 @@ extpay.onPaid.addListener(user => {
 	chrome.notifications.create({
 		type: "basic",
 		iconUrl: "icon_128.png",
-		title: "IMPORTANT FIRST USAGE",
-		message: "Please navigate between few tabs prior to pressing Alt + Q or clicking the extension icon to initiate the extension.",
+		title: "IMPORTANT: FIRST USAGE",
+		message: "Please navigate between a few tabs prior to pressing Alt + Q or clicking the extension icon to initiate the extension.",
 	});
 	switchTabs();
 });
