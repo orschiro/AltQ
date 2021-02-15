@@ -33,7 +33,8 @@
 	"permissions": [
 		"activeTab",
 		"https://extensionpay.com/*",
-        "storage"
+        "storage",
+		"notifications"
 	],
 	"icons": {
 		"16": "icon_16.png",

@@ -14,6 +14,12 @@ extpay.getUser().then(user => {
 // https://github.com/Glench/ExtPay#6-use-extpayonpaidaddlistener-to-run-code-when-the-user-pays
 extpay.onPaid.addListener(user => {
     console.log('user paid!')
+	chrome.notifications.create({
+		type: "basic",
+		iconUrl: "icon_128.png",
+		title: "IMPORTANT FIRST USAGE",
+		message: "Please navigate between few tabs prior to pressing Alt + Q or clicking the extension icon to initiate the extension.",
+	});
 	switchTabs();
 });
 
