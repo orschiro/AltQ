@@ -1,0 +1,11 @@
+{
+  "appName": {
+    "message": "Alt + Q 최근 활성 탭 전환"
+  },
+  "appDesc": {
+    "message": "키보드 단축키 Alt + Q를 사용하여 활성 탭과 이전에 본 탭간에 전환합니다."
+  },
+  "defaultTitle": {
+    "message": "탭 전환"
+  }
+}
