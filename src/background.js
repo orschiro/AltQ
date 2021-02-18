@@ -1,5 +1,5 @@
 // ExtensionPay
-const extpay = ExtPay('alt--q-switch-recent-active-tabs');
+const extpay = ExtPay('alt--q-switch-recent-active-tabs')
 
 // https://github.com/Glench/ExtPay#4-use-extpaygetuser-to-check-users-paid-status
 extpay.getUser().then(user => {
@@ -7,13 +7,14 @@ extpay.getUser().then(user => {
 		switchTabs();
 	} else {
 		extpay.openPaymentPage()
-		}
- 	});
+	}
+});
 
 // onpaid callback
 // https://github.com/Glench/ExtPay#6-use-extpayonpaidaddlistener-to-run-code-when-the-user-pays
 extpay.onPaid.addListener(user => {
     console.log('user paid!')
+	// notification first usage post install
 	chrome.notifications.create({
 		type: "basic",
 		iconUrl: "icon_128.png",
