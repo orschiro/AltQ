@@ -3,7 +3,7 @@
     "message": "Alt + Q Switch Recent Active Tabs"
   },
   "appDesc": {
-    "message": "Switch between your active tab and the previously viewed one using the keyboard shortcut Alt + Q."
+    "message": "Use Alt + Q to quickly switch between your active and the previous tab."
   },
   "defaultTitle": {
     "message": "Switch Tabs"
