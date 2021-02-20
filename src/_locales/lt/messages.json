@@ -1,0 +1,11 @@
+{
+  "appName": {
+    "message": "Alt + Q Perjungti naujausius aktyvius skirtukus"
+  },
+  "appDesc": {
+    "message": "Norėdami greitai perjungti aktyvųjį ir ankstesnį skirtuką, naudokite „Alt“ + Q."
+  },
+  "defaultTitle": {
+    "message": "Perjungti skirtukus"
+  }
+}
