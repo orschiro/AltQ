@@ -1,14 +1,11 @@
 {
   "appName": {
-    "message": "Alt + Q Schakelaar Tabs Toetsenbord snelkoppeling"
+    "message": "Alt + Q Schakelen tussen recent actieve tabbladen"
   },
   "appDesc": {
-    "message": "Schakelen tussen de twee meest recent gebruikte tabbladen van het toetsenbord."
+    "message": "Gebruik Alt + Q om snel te schakelen tussen uw actieve en het vorige tabblad."
   },
   "defaultTitle": {
-    "message": "Schakelaar Tabs"
-  },
-  "contextMenu": {
-    "message": "Ga naar het eerder bekeken tabblad na het sluiten van het huidige tabblad"
+    "message": "Schakelen tussen tabbladen"
   }
 }
