@@ -1,14 +1,11 @@
 {
   "appName": {
-    "message": "Tukar Tab Terkini"
+    "message": "Alt + Q Switch Tab Aktif Terkini"
   },
   "appDesc": {
-    "message": "Dengan Alt + Q"
+    "message": "Gunakan Alt + Q untuk beralih dengan cepat antara tab aktif dan tab sebelumnya."
   },
   "defaultTitle": {
-    "message": "Tukar tab"
-  },
-  "contextMenu": {
-    "message": "Pergi ke tab sebelumnya yang dilihat selepas menutup semasa"
+    "message": "Tukar Tab"
   }
 }
