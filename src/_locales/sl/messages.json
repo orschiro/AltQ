@@ -1,0 +1,11 @@
+{
+  "appName": {
+    "message": "Alt + Q Preklopi nedavne aktivne zavihke"
+  },
+  "appDesc": {
+    "message": "Uporabite Alt + Q za hitro preklapljanje med aktivnim in prejšnjim zavihkom."
+  },
+  "defaultTitle": {
+    "message": "Preklopi zavihke"
+  }
+}
