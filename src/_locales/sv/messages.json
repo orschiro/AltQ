@@ -3,7 +3,7 @@
     "message": "Alt + Q Byt senaste aktiva flikar"
   },
   "appDesc": {
-    "message": "Växla mellan din aktiva flik och den tidigare visade med tangentbordsgenvägen Alt + Q."
+    "message": "Använd Alt + Q för att snabbt växla mellan din aktiva och föregående flik."
   },
   "defaultTitle": {
     "message": "Byt flikar"

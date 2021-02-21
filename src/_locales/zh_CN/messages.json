@@ -1,8 +1,11 @@
 {
   "appName": {
-    "message": "切换开关最近的最后一个标签"
+    "message": "Alt + Q切換近期活動標籤"
   },
   "appDesc": {
-    "message": "通过按键盘上的Alt + Q在当前和最近使用的标签之间来回切换。"
+    "message": "使用Alt + Q快速在活動標籤和上一個標籤之間切換。"
+  },
+  "defaultTitle": {
+    "message": "切換標籤"
   }
 }
