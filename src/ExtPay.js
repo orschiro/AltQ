@@ -1265,7 +1265,7 @@ var ExtPay = (function () {
 	        }
 	    }
 
-	    browserPolyfill.runtime.onInstalled.addListener(async function(install_details) {
+	    browserPolyfill.runtime.onInstalled && browserPolyfill.runtime.onInstalled.addListener(async function(install_details) {
 	        
 	        const ext_info = await browserPolyfill.management.getSelf();
 	        if (ext_info.installType == 'development') {
@@ -1309,7 +1309,7 @@ You can copy and paste this to your manifest.json file to fix this error:
 	            }
 	            const manifest = await manifest_resp.json();
 	            if (!manifest.content_scripts) {
-	                throw `ExtPay setup error: Please include ExtPay as a content script in your manifest.json. You can copy the example below into your manifest.json or check the docs: https://github.com/Glench/ExtPay#2-add-extension-permissions-to-your-manifestjson
+	                throw `ExtPay setup error: Please include ExtPay as a content script in your manifest.json. You can copy the example below into your manifest.json or check the docs: https://github.com/Glench/ExtPay#2-configure-your-manifestjson
 
     ${content_script_template}`
 	            }
@@ -1330,7 +1330,7 @@ You can copy and paste this to your manifest.json file to fix this error:
 	            }
 	        }
 
-	        if (install_details.reason !== 'install' && !install_details.reason !== 'update') {
+	        if (install_details.reason !== 'install' && install_details.reason !== 'update') {
 	            return
 	        }
 
@@ -1374,24 +1374,29 @@ You can copy and paste this to your manifest.json file to fix this error:
 	            storage = await get(['extensionpay_api_key', 'extensionpay_user']);
 	        }
 	        if (!storage.extensionpay_api_key) throw 'ExtPay Error: timed out registering user.'
-	        try {
-	            browserPolyfill.windows.create({
-	                url: `${EXTENSION_URL}?api_key=${storage.extensionpay_api_key}`,
-	                type: "popup",
-	                focused: true,
-	                width: 500,
-	                height: 800,
-	                left: 450
-	            });
-	        } catch(e) {
-	            // firefox doesn't support 'focused'
-	            browserPolyfill.windows.create({
-	                url: `${EXTENSION_URL}?api_key=${storage.extensionpay_api_key}`,
-	                type: "popup",
-	                width: 500,
-	                height: 800,
-	                left: 450
-	            });
+	        if (browserPolyfill.windows) {
+	            try {
+	                browserPolyfill.windows.create({
+	                    url: `${EXTENSION_URL}?api_key=${storage.extensionpay_api_key}`,
+	                    type: "popup",
+	                    focused: true,
+	                    width: 500,
+	                    height: 800,
+	                    left: 450
+	                });
+	            } catch(e) {
+	                // firefox doesn't support 'focused'
+	                browserPolyfill.windows.create({
+	                    url: `${EXTENSION_URL}?api_key=${storage.extensionpay_api_key}`,
+	                    type: "popup",
+	                    width: 500,
+	                    height: 800,
+	                    left: 450
+	                });
+	            }
+	        } else {
+	            // https://developer.mozilla.org/en-US/docs/Web/API/Window/open
+	            window.open(`${EXTENSION_URL}?api_key=${storage.extensionpay_api_key}`, null, "toolbar=no,location=no,directories=no,status=no,menubar=no,width=500,height=800,left=450");
 	        }
 	    }
 
