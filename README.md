@@ -1,1 +1,1 @@
-Available on [Chrome Webstore](https://chrome.google.com/webstore/detail/switch-between-last-tabs/odhjcgnlbagjllfbilicalpigimhdcll) and [Firefox Add-on Store](https://addons.mozilla.org/en-GB/firefox/addon/alt-q-switch-recent-tabs/).
+Available on [Chrome Webstore](https://chrome.google.com/webstore/detail/switch-between-last-tabs/odhjcgnlbagjllfbilicalpigimhdcll), [Edge Webstore](https://microsoftedge.microsoft.com/addons/detail/ldeohgefdobmkiopipcfcaflkknifhpj) and [Firefox Add-on Store](https://addons.mozilla.org/en-GB/firefox/addon/alt-q-switch-recent-tabs/).
