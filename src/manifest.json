@@ -10,13 +10,11 @@
             "run_at": "document_start"
         }
     ],
-	"name": "__MSG_appName__",
-	"description": "__MSG_appDesc__",
-	"default_locale": "en",
-	"version": "33",
+	"name": "Alt + Q Switch Toggle Most Recent Active Tabs",
+	"description": "Press Alt + Q to quickly switch between your currently active tab and the previously viewed one.",
+	"version": "34",
 	"manifest_version": 2,
 	"browser_action": {
-		"default_title": "__MSG_defaultTitle__",
 		"default_icon": "icon.png"
 	},
 	"commands": {

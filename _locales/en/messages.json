@@ -1,0 +1,17 @@
+{
+  "appName": {
+    "message": "Alt + Q Switch Recent Active Tabs"
+  },
+  "appDesc": {
+    "message": "Press Alt + Q to quickly switch between the current and the previous tab."
+  },
+  "defaultTitle": {
+    "message": "Switch Tabs"
+  },
+  "notificationTitle": {
+    "message": "Installation successful"
+  },
+  "notificationMessage": {
+    "message": "Now switch between a few tabs to initiate the extension."
+  }
+}
