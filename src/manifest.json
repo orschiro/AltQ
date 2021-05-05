@@ -10,9 +10,9 @@
             "run_at": "document_start"
         }
     ],
-	"name": "Alt + Q Switch Toggle Most Recent Active Tabs",
-	"description": "Press Alt + Q to quickly switch between your currently active tab and the previously viewed one.",
-	"version": "34",
+	"name": "Alt + Q Switch To Toggle Recently Active Tabs",
+	"description": "Press Alt + Q to quickly switch between your currently active tab and the previously used one.",
+	"version": "35",
 	"manifest_version": 2,
 	"browser_action": {
 		"default_icon": "icon.png"
@@ -30,9 +30,7 @@
 	},
 	"permissions": [
 		"activeTab",
-		"https://extensionpay.com/*",
-        "storage",
-		"notifications"
+        "storage"
 	],
 	"icons": {
 		"16": "icon_16.png",
