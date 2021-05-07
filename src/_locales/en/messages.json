@@ -3,6 +3,6 @@
     "message": "Alt + Q Switch Toggle Recent Active Tabs"
   },
   "appDesc": {
-    "message": "Keyboard shortcut to switch between most active tabs."
+    "message": "Keyboard shortcut to cycle between the two most recently active tabs."
   }
 }

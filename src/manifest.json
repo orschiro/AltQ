@@ -12,6 +12,7 @@
     ],
 	"name": "__MSG_appName__",
 	"description": "__MSG_appDesc__",
+	"default_locale": "en",
 	"version": "36",
 	"manifest_version": 2,
 	"browser_action": {

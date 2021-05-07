@@ -3,6 +3,6 @@
     "message": "Alt + Q Přepnout Přepnout Nedávné aktivní karty"
   },
   "appDesc": {
-    "message": "Klávesová zkratka pro přepínání mezi nejaktivnějšími kartami."
+    "message": "Klávesová zkratka pro cyklování mezi dvěma naposledy aktivními kartami."
   }
 }

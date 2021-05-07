@@ -3,6 +3,6 @@
     "message": "Alt + Q-Schalter Umschalten der zuletzt aktiven Registerkarten"
   },
   "appDesc": {
-    "message": "Tastaturkürzel zum Umschalten zwischen den aktivsten Registerkarten."
+    "message": "Tastaturkürzel zum Wechseln zwischen den beiden zuletzt aktiven Registerkarten."
   }
 }
