@@ -10,9 +10,9 @@
             "run_at": "document_start"
         }
     ],
-	"name": "Alt + Q Switch To Toggle Recently Active Tabs",
-	"description": "Press Alt + Q to quickly switch between your currently active tab and the previously used one.",
-	"version": "35",
+	"name": "__MSG_appName__",
+	"description": "__MSG_appDesc__",
+	"version": "36",
 	"manifest_version": 2,
 	"browser_action": {
 		"default_icon": "icon.png"

@@ -1,0 +1,8 @@
+{
+  "appName": {
+    "message": "Alt + Q Switch Toggle Recent Active Tabs"
+  },
+  "appDesc": {
+    "message": "Keyboard shortcut to switch between most active tabs."
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "appName": {
+    "message": "Alt + Q Switch Przełącz ostatnio aktywne karty"
+  },
+  "appDesc": {
+    "message": "Skrót klawiaturowy do przełączania między najbardziej aktywnymi kartami."
+  }
+}
