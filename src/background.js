@@ -8,7 +8,7 @@ extpay.getUser().then(user => {
 	} else {
 		extpay.openPaymentPage()
 	}
-}).catch(switchTabs());
+})
 
 // onpaid callback
 // https://github.com/Glench/ExtPay#6-use-extpayonpaidaddlistener-to-run-code-when-the-user-pays
