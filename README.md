@@ -1,5 +1,9 @@
 # Alt + Q Switch Toggle Recent Active Tabs
-Keyboard shortcut to cycle between the two most recently active tabs.
+Keyboard shortcut to switch between the two most recently active tabs.
+
+Press Alt + Q on your keyboard to toggle between your two most active tabs.
+
+Cycle between your two recently active tabs by pressing Alt + Q on your keyboard.
 
 Available on [Chrome Webstore](https://chrome.google.com/webstore/detail/switch-between-last-tabs/odhjcgnlbagjllfbilicalpigimhdcll), [Edge Webstore](https://microsoftedge.microsoft.com/addons/detail/ldeohgefdobmkiopipcfcaflkknifhpj) and [Firefox Add-on Store](https://addons.mozilla.org/firefox/addon/alt-q-switch-recent-active-tab/).
 
