@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q Přepnout Přepnout Nedávné aktivní karty"
+    "message": "Alt + Q přepnout na přepnutí posledních aktivních karet"
   },
   "appDesc": {
-    "message": "Klávesová zkratka pro cyklování mezi dvěma naposledy aktivními kartami."
+    "message": "Klávesová zkratka pro přepínání mezi dvěma naposledy použitými kartami."
   }
 }

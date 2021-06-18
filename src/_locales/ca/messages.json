@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Canvia Alt + Q Alterna les pestanyes actives recents"
+    "message": "Alt + Q Alterna per canviar les pestanyes actives recents"
   },
   "appDesc": {
-    "message": "Drecera de teclat per desplaçar-se entre les dues pestanyes actives més recentment."
+    "message": "Keyboard accés directe per canviar entre les dues llengüetes utilitzats més recentment."
   }
 }

@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q-switch Skift de seneste aktive faner"
+    "message": "Alt + Q Skift for at skifte Seneste aktive faner"
   },
   "appDesc": {
-    "message": "Tastaturgenvej til at skifte mellem de to senest aktive faner."
+    "message": "Tastaturgenvej til at skifte mellem de to senest anvendte faner."
   }
 }

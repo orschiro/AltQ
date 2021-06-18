@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q Switch Alternar pestañas activas recientes"
+    "message": "Alt + Q botón para cambiar recientes pestañas activas"
   },
   "appDesc": {
-    "message": "Atajo de teclado para alternar entre las dos pestañas activas más recientemente."
+    "message": "Método abreviado de teclado para cambiar entre las dos pestañas utilizadas más recientemente"
   }
 }

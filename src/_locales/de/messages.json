@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q-Schalter Umschalten der zuletzt aktiven Registerkarten"
+    "message": "Alt + Q umschalten, um zuletzt aktive Tabs zu wechseln"
   },
   "appDesc": {
-    "message": "Tastaturkürzel zum Wechseln zwischen den beiden zuletzt aktiven Registerkarten."
+    "message": "Tastaturkürzel zum Wechseln zwischen den beiden zuletzt verwendeten Tabs."
   }
 }

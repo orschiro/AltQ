@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q Switch Basculer entre les onglets actifs récents"
+    "message": "Alt + Q Basculer pour changer les onglets actifs récents"
   },
   "appDesc": {
-    "message": "Raccourci clavier pour parcourir les deux onglets les plus récemment actifs."
+    "message": "Raccourci clavier pour basculer entre les deux onglets les plus récemment utilisés."
   }
 }

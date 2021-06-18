@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q-kytkin Vaihda viimeisimmät aktiiviset välilehdet"
+    "message": "Alt + Q Vaihda aktiivisten välilehtien vaihtamiseen"
   },
   "appDesc": {
-    "message": "Pikanäppäin siirtyäksesi kahden viimeksi aktiivisen välilehden välillä."
+    "message": "pikanäppäin on vaihtaa kahden viimeksi käytetty välilehdet."
   }
 }

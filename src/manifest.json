@@ -1,15 +1,7 @@
 {
 	"background": {
-		"scripts": ["ExtPay.js", "background.js"],
-		"persistent": true
+		"scripts": ["ExtPay.js", "background.js"]
 	},
-	"content_scripts": [
-        {
-            "matches": ["https://extensionpay.com/*"],
-            "js": ["ExtPay.js"],
-            "run_at": "document_start"
-        }
-    ],
 	"name": "__MSG_appName__",
 	"description": "__MSG_appDesc__",
 	"default_locale": "en",
