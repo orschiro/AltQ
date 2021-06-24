@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q Switch Przełącz ostatnio aktywne karty"
+    "message": "Przełączaj się między dwiema najnowszymi kartami"
   },
   "appDesc": {
-    "message": "Skrót klawiaturowy do przełączania między dwiema ostatnio aktywnymi kartami."
+    "message": "Użyj skrótu <Alt + Q>, aby przełączać się między dwiema ostatnio używanymi kartami. Rozszerzenie wymaga jednorazowej płatności, aby z niego skorzystać."
   }
 }

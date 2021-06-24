@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q Alterna per canviar les pestanyes actives recents"
+    "message": "Canvieu entre les dues pestanyes més recents"
   },
   "appDesc": {
-    "message": "Keyboard accés directe per canviar entre les dues llengüetes utilitzats més recentment."
+    "message": "Utilitzeu la drecera <Alt + Q> per canviar entre les dues pestanyes utilitzades més recentment. L'extensió requereix un pagament únic per utilitzar-la."
   }
 }

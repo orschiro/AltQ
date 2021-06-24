@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q umschalten, um zuletzt aktive Tabs zu wechseln"
+    "message": "Wechseln Sie zwischen Ihren beiden letzten Tabs"
   },
   "appDesc": {
-    "message": "Tastaturkürzel zum Wechseln zwischen den beiden zuletzt verwendeten Tabs."
+    "message": "Verwenden Sie die Tastenkombination <Alt + Q>, um zwischen Ihren beiden zuletzt verwendeten Registerkarten zu wechseln. Die Verlängerung erfordert eine einmalige Zahlung, um sie zu nutzen."
   }
 }
