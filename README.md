@@ -12,7 +12,7 @@ Available on [Chrome Webstore](https://chrome.google.com/webstore/detail/switch-
 ## Safari (development)
 We are currently working on publishing the extension to the Safari Store (special thanks to Mikhail). For now, follow these steps to beta test and provide your feedback:
 
-1. Download and extract the ZIP archive
+1. [Download](https://drive.google.com/file/d/10uYhDZFDzvCOCMYqOe8k9oHkhTiNlB6p/view?ts=614e08b3) and extract the ZIP archive
 2. Run the extracted app (allow it to run from System Preferences > Security and Privacy)
 3. Open Safari and go to Preferences > Extensions to enable the extension
 
