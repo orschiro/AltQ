@@ -61,7 +61,11 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 
 		 if (!trialStartedAt) {
 			// user trial is inactive
+<<<<<<< HEAD
 			extpay.openTrialPage('7-day')
+=======
+			extpay.openTrialPage('1-day')
+>>>>>>> ac5ac88e404e59de0e6f25fa0adecb4951ea2aa1
 		}	
 
 		if (trial == true) {
