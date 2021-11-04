@@ -1,5 +1,9 @@
 // ExtensionPay
 const extpay = ExtPay('alt--q-switch-recent-active-tabs')
+let extpayCheck;
+let paid;
+let trial;
+let trialStartedAt;
 
 let tabHistory = {};
 let currentTabId;
@@ -19,17 +23,52 @@ function init() {
 	});
 }
 
+function switchTabs() {
+	let prevTab = tabHistory[currentTabId].prev;
+	if (prevTab.id) { // Check if is dummy start.
+		chrome.tabs.update(prevTab.id, {active: true});
+}}
+
 chrome.browserAction.onClicked.addListener(function(tab) {
-	extpay.getUser().then(user => {
-		if (user.paid) {
-			let prevTab = tabHistory[currentTabId].prev;
-			if (prevTab.id) { // Check if is dummy start.
-				chrome.tabs.update(prevTab.id, {active: true});
-			}
-		} else {
-			extpay.openPaymentPage()
+	const now = new Date();
+	const sevenDays = 1000*60*60*24*7; // in milliseconds
+	if (!extpayCheck == true || !trial == true) {
+		extpay.getUser().then(user => {
+			paid = user.paid;
+			trialStartedAt = user.trialStartedAt;
+			extpayCheck = true;
+		})
+	}
+	
+	if (paid == true) {
+		switchTabs()
+	}
+
+	else {
+	
+		if (trialStartedAt && (now - trialStartedAt) > sevenDays) {
+		// user's trial expired
+		trialExpired = true;
+		extpay.openPaymentPage()
+		extpayCheck = false;
 		}
-	})
+
+		if (trialStartedAt && (now - trialStartedAt) < sevenDays) {
+			// user's trial is active
+			trial = true;
+			switchTabs()
+		}
+
+		 if (!trialStartedAt) {
+			// user trial is inactive
+			extpay.openTrialPage('7-day')
+		}	
+
+		if (trial == true) {
+			switchTabs()
+		}
+
+	}
 });
 
 chrome.tabs.onActivated.addListener(function(info) {
