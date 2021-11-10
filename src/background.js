@@ -29,17 +29,18 @@ function switchTabs() {
 		chrome.tabs.update(prevTab.id, {active: true});
 }}
 
+chrome.runtime.onStartup.addListener(function() {
+	console.log('open');
+	extpay.getUser().then(user => {
+		paid = user.paid;
+		trialStartedAt = user.trialStartedAt;
+		extpayCheck = true;
+	})
+})
+
 chrome.browserAction.onClicked.addListener(function(tab) {
 	const now = new Date();
-	const sevenDays = 1000*60*60*24*7; // in milliseconds
-	if (!extpayCheck == true || !trial == true) {
-		extpay.getUser().then(user => {
-			paid = user.paid;
-			trialStartedAt = user.trialStartedAt;
-			extpayCheck = true;
-		})
-	}
-	
+	const sevenDays = 1000*60*60*24*7; // in milliseconds	
 	if (paid == true) {
 		switchTabs()
 	}
