@@ -1,9 +1,10 @@
 // ExtensionPay
-const extpay = ExtPay('alt--q-switch-recent-active-tabs')
-let extpayCheck;
+const extpay = ExtPay('alt--q-switch-recent-active-tabs');
 let paid;
 let trial;
+let trialDays = 7;
 let trialStartedAt;
+let userChecked;
 
 let tabHistory = {};
 let currentTabId;
@@ -29,47 +30,63 @@ function switchTabs() {
 		chrome.tabs.update(prevTab.id, {active: true});
 }}
 
-chrome.runtime.onStartup.addListener(function() {
-	console.log('open');
+function checkUser() {
 	extpay.getUser().then(user => {
 		paid = user.paid;
 		trialStartedAt = user.trialStartedAt;
-		extpayCheck = true;
-	})
-})
+	});
+	userChecked = true;
+}
+
+// Check whether new version is installed
+chrome.runtime.onInstalled.addListener(function(details){
+    if(details.reason == "install"){
+        console.log("This is a first install!");
+		if (confirm('Choose OK to start a free ' + trialDays +  ' days trial or CANCEL to log into an existing account')) {
+			extpay.openTrialPage(trialDays + '-day')
+		  } else {
+			extpay.openPaymentPage()
+		  }
+    } else if(details.reason == "update"){
+		checkUser()
+    }
+});
+
+// On browser start
+chrome.runtime.onStartup.addListener(function() {
+	checkUser()
+});
 
 chrome.browserAction.onClicked.addListener(function(tab) {
+	for (let i = 0; i < 5; i++) {
+		checkUser()
+	}
+
+	if (!userChecked == true) {
+		checkUser()
+	}
+
 	const now = new Date();
-	const sevenDays = 1000*60*60*24*7; // in milliseconds	
-	if (paid == true) {
+	const sevenDays = 1000*60*60*24*trialDays; // in milliseconds	
+	
+	if (paid == true || trial == true) {
 		switchTabs()
 	}
 
 	else {
 	
 		if (trialStartedAt && (now - trialStartedAt) > sevenDays) {
-		// user's trial expired
-		trialExpired = true;
-		extpay.openPaymentPage()
-		extpayCheck = false;
-		}
+			// user's trial expired
+			extpay.openPaymentPage()
+			trial = false;
+		};
 
 		if (trialStartedAt && (now - trialStartedAt) < sevenDays) {
 			// user's trial is active
+			switchTabs();
 			trial = true;
-			switchTabs()
 		}
-
-		 if (!trialStartedAt) {
-			// user trial is inactive
-			extpay.openTrialPage('7-day')
-		}	
-
-		if (trial == true) {
-			switchTabs()
-		}
-
-	}
+	};
 });
 
 chrome.tabs.onActivated.addListener(function(info) {
