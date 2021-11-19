@@ -35,7 +35,6 @@ function checkUser() {
 		paid = user.paid;
 		trialStartedAt = user.trialStartedAt;
 	});
-	userChecked = true;
 }
 
 // Check whether new version is installed
@@ -62,31 +61,25 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 		checkUser()
 	}
 
-	if (!userChecked == true) {
-		checkUser()
-	}
-
 	const now = new Date();
-	const sevenDays = 1000*60*60*24*trialDays; // in milliseconds	
+	const trialPeriod = 1000*60*60*24*trialDays; // in milliseconds	
+	// const trialPeriod = 1000*60*60; // 1 hour	
 	
-	if (paid == true || trial == true) {
+	if (!paid == true && trialStartedAt && (now - trialStartedAt) > trialPeriod) {
+				// user's trial expired
+				extpay.openPaymentPage()
+				trial = false;
+			}
+	
+	else if (!paid == true && trialStartedAt && (now - trialStartedAt) < trialPeriod) {
+				// user's trial is active
+				switchTabs()
+				trial = true;
+			}
+
+	else if (paid == true || trial == true) {
 		switchTabs()
 	}
-
-	else {
-	
-		if (trialStartedAt && (now - trialStartedAt) > sevenDays) {
-			// user's trial expired
-			extpay.openPaymentPage()
-			trial = false;
-		};
-
-		if (trialStartedAt && (now - trialStartedAt) < sevenDays) {
-			// user's trial is active
-			switchTabs();
-			trial = true;
-		}
-	};
 });
 
 chrome.tabs.onActivated.addListener(function(info) {
