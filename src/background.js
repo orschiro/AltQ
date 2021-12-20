@@ -1,10 +1,7 @@
 // ExtensionPay
 const extpay = ExtPay('alt--q-switch-recent-active-tabs');
 let paid;
-let trial;
-let trialDays = 7;
-let trialStartedAt;
-let userChecked;
+let newInstall;
 
 let tabHistory = {};
 let currentTabId;
@@ -41,11 +38,7 @@ function checkUser() {
 chrome.runtime.onInstalled.addListener(function(details){
     if(details.reason == "install"){
         console.log("This is a first install!");
-		if (confirm('Choose OK to start a free ' + trialDays +  ' days trial or CANCEL to log into an existing account')) {
-			extpay.openTrialPage(trialDays + '-day')
-		  } else {
-			extpay.openPaymentPage()
-		  }
+		newInstall = true;
     } else if(details.reason == "update"){
 		checkUser()
     }
@@ -60,24 +53,12 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 	for (let i = 0; i < 5; i++) {
 		checkUser()
 	}
-
-	const now = new Date();
-	const trialPeriod = 1000*60*60*24*trialDays; // in milliseconds	
-	// const trialPeriod = 1000*60*60; // 1 hour	
 	
-	if (!paid == true && trialStartedAt && (now - trialStartedAt) > trialPeriod) {
-				// user's trial expired
+	if (!paid == true && !newInstall == true) {
 				extpay.openPaymentPage()
-				trial = false;
-			}
-	
-	else if (!paid == true && trialStartedAt && (now - trialStartedAt) < trialPeriod) {
-				// user's trial is active
-				switchTabs()
-				trial = true;
 			}
 
-	else if (paid == true || trial == true) {
+	else if (paid == true || newInstall == true) {
 		switchTabs()
 	}
 });
