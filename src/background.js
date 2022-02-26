@@ -38,7 +38,8 @@ function checkUser() {
 chrome.runtime.onInstalled.addListener(function(details){
     if(details.reason == "install"){
         console.log("This is a first install!");
-		newInstall = true;
+		// newInstall = true;
+		checkUser()
     } else if(details.reason == "update"){
 		checkUser()
     }

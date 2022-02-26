@@ -1,0 +1,8 @@
+{
+  "appName": {
+    "message": "Alt + Q botón para cambiar recientes pestañas activas"
+  },
+  "appDesc": {
+    "message": "Método abreviado de teclado para cambiar entre las dos pestañas utilizadas más recientemente"
+  }
+}
