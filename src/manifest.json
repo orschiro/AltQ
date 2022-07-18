@@ -5,7 +5,7 @@
 	"name": "__MSG_appName__",
 	"description": "__MSG_appDesc__",
 	"default_locale": "en",
-	"version": "43",
+	"version": "43.1",
 	"manifest_version": 2,
 	"browser_action": {
 		"default_icon": "icon.png"
@@ -23,8 +23,7 @@
 	},
 	"permissions": [
 		"activeTab",
-        "storage",
-		"tabs"
+        "storage"
 	],
 	"icons": {
 		"16": "icon_16.png",
