@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q Alternar Alternar entre guias ativas recentes"
+    "message": "Alternar últimas guias"
   },
   "appDesc": {
-    "message": "Atalho de teclado para alternar entre as duas guias ativas mais recentemente."
+    "message": "Use o atalho <Alt + Q> (ou defina o seu próprio) para alternar entre as duas últimas guias usadas. Requer um pagamento único."
   }
 }

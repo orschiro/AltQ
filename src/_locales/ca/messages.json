@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Canvieu entre les dues pestanyes més recents"
+    "message": "Canvia les darreres pestanyes"
   },
   "appDesc": {
-    "message": "Utilitzeu la drecera <Alt + Q> per canviar entre les dues pestanyes utilitzades més recentment. L'extensió requereix un pagament únic per utilitzar-la."
+    "message": "Utilitzeu la drecera <Alt + Q> (o definiu la vostra) per canviar entre les dues darreres pestanyes utilitzades. Requereix un pagament únic."
   }
 }

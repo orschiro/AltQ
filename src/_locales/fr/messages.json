@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q Basculer pour changer les onglets actifs récents"
+    "message": "Changer les derniers onglets"
   },
   "appDesc": {
-    "message": "Raccourci clavier pour basculer entre les deux onglets les plus récemment utilisés."
+    "message": "Utilisez le raccourci <Alt + Q> (ou définissez le vôtre) pour basculer entre vos deux derniers onglets utilisés. Nécessite un paiement unique."
   }
 }

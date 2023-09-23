@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q Lülita viimaste aktiivsete vahelehtede vahetamiseks"
+    "message": "Vahetage viimased vahelehed"
   },
   "appDesc": {
-    "message": "Klaviatuuri otsetee vahetamiseks kahe viimati kasutatud klapid."
+    "message": "Kahe viimati kasutatud vahelehe vahetamiseks kasutage otseteed <Alt + Q> (või määrake oma). Nõuab ühekordset makset."
   }
 }

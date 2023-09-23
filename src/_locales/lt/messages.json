@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q jungiklis perjungti naujausius aktyvius skirtukus"
+    "message": "Perjungti paskutinius skirtukus"
   },
   "appDesc": {
-    "message": "Spartusis klavišas, skirtas pereiti tarp dviejų naujausių aktyvių skirtukų."
+    "message": "Naudokite sparčiuosius klavišus <Alt + Q> (arba nustatykite savo), kad perjungtumėte du paskutinius naudotus skirtukus. Reikalingas vienkartinis mokėjimas."
   }
 }

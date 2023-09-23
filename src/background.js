@@ -30,15 +30,14 @@ function switchTabs() {
 function checkUser() {
 	extpay.getUser().then(user => {
 		paid = user.paid;
-		trialStartedAt = user.trialStartedAt;
 	});
 }
 
-// Check whether new version is installed
+// Check whether new browser version is installed
 chrome.runtime.onInstalled.addListener(function(details){
     if(details.reason == "install"){
         console.log("This is a first install!");
-		// newInstall = true;
+		newInstall = true;
 		checkUser()
     } else if(details.reason == "update"){
 		checkUser()
@@ -50,11 +49,7 @@ chrome.runtime.onStartup.addListener(function() {
 	checkUser()
 });
 
-chrome.browserAction.onClicked.addListener(function(tab) {
-	for (let i = 0; i < 5; i++) {
-		checkUser()
-	}
-	
+chrome.browserAction.onClicked.addListener(function(tab) {	
 	if (!paid == true && !newInstall == true) {
 				extpay.openPaymentPage()
 			}

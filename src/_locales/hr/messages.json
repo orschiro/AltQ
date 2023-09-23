@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q prebacuje / prebacuje nedavne aktivne kartice"
+    "message": "Promjena zadnje kartice"
   },
   "appDesc": {
-    "message": "Tipkovni prečac za prelazak s dvije najnovije aktivne kartice."
+    "message": "Upotrijebite prečac <Alt + Q> (ili definirajte vlastiti) za prebacivanje između dvije posljednje korištene kartice. Zahtijeva jednokratno plaćanje."
   }
 }

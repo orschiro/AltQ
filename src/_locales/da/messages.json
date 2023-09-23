@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Skift mellem dine to seneste faner"
+    "message": "Skift sidste faner"
   },
   "appDesc": {
-    "message": "Brug genvejen <Alt + Q> til at skifte mellem dine to senest anvendte faner. Udvidelsen kræver en engangsbetaling for at bruge den."
+    "message": "Brug genvejen <Alt + Q> (eller definer din egen) for at skifte mellem dine to sidst brugte faner. Kræver en engangsbetaling."
   }
 }

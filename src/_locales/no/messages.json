@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q-bryter Veksle siste aktive faner"
+    "message": "Bytt siste faner"
   },
   "appDesc": {
-    "message": "Tastatursnarvei for å bla mellom de to sist aktive fanene."
+    "message": "Bruk snarveien <Alt + Q> (eller definer din egen) for å bytte mellom de to sist brukte fanene. Krever en engangsbetaling."
   }
 }

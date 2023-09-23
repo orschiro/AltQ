@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q kapcsoló Váltás a legújabb aktív lapokra"
+    "message": "Váltás az utolsó lapokra"
   },
   "appDesc": {
-    "message": "Billentyűparancs a két legutóbb aktív lap közötti váltáshoz."
+    "message": "Használja az <Alt + Q> billentyűparancsot (vagy adja meg a sajátját) a két utoljára használt lap közötti váltáshoz. Egyszeri fizetést igényel."
   }
 }

@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Comutator Alt + Q Comutați filele active recente"
+    "message": "Comutați ultimele file"
   },
   "appDesc": {
-    "message": "Comandă rapidă de la tastatură pentru a merge între cele mai recente file active."
+    "message": "Utilizați comanda rapidă <Alt + Q> (sau definiți-vă propria) pentru a comuta între ultimele două file utilizate. Necesită o singură plată."
   }
 }

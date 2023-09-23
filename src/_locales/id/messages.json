@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q Beralih Mengalihkan Tab Aktif Terbaru"
+    "message": "Ganti Tab Terakhir"
   },
   "appDesc": {
-    "message": "Pintasan keyboard untuk berpindah di antara dua tab yang paling baru-baru ini aktif."
+    "message": "Gunakan pintasan <Alt + Q> (atau tentukan pintasan Anda sendiri) untuk beralih di antara dua tab yang terakhir Anda gunakan. Membutuhkan pembayaran satu kali."
   }
 }

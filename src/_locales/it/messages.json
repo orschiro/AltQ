@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q Switch Attiva / disattiva le schede attive recenti"
+    "message": "Cambia le ultime schede"
   },
   "appDesc": {
-    "message": "Scorciatoia da tastiera per scorrere le due schede attive più di recente."
+    "message": "Usa la scorciatoia <Alt + Q> (o definisci la tua) per passare tra le ultime due schede utilizzate. Richiede un pagamento una tantum."
   }
 }

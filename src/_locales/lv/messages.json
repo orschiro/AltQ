@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q slēdzis Pārslēgt pēdējās aktīvās cilnes"
+    "message": "Pārslēgt pēdējās cilnes"
   },
   "appDesc": {
-    "message": "Tastatūras saīsne, lai pārvietotos starp divām pēdējām aktīvajām cilnēm."
+    "message": "Izmantojiet īsinājumtaustiņu <Alt+Q> (vai definējiet savu), lai pārslēgtos starp divām pēdējām izmantotajām cilnēm. Nepieciešams vienreizējs maksājums."
   }
 }

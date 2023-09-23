@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q preklopi / preklopi nedavne aktivne zavihke"
+    "message": "Preklopite zadnje zavihke"
   },
   "appDesc": {
-    "message": "Bližnjična tipka za preklapljanje med zadnjima aktivnima zavihkoma."
+    "message": "Za preklapljanje med zadnjima uporabljenima zavihkoma uporabite bližnjico <Alt + Q> (ali določite svojo). Zahteva enkratno plačilo."
   }
 }

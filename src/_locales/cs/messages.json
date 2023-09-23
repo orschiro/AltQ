@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Přepínejte mezi dvěma nejnovějšími kartami"
+    "message": "Přepnout poslední karty"
   },
   "appDesc": {
-    "message": "Pomocí zkratky <Alt + Q> můžete přepínat mezi dvěma naposledy použitými kartami. Rozšíření vyžaduje k jeho použití jednorázovou platbu."
+    "message": "K přepínání mezi dvěma naposledy použitými kartami použijte zkratku <Alt + Q> (nebo definujte vlastní). Vyžaduje jednorázovou platbu."
   }
 }

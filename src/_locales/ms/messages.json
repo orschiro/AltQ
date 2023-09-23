@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q Switch Toggle Tab Aktif Terkini"
+    "message": "Tukar Tab Terakhir"
   },
   "appDesc": {
-    "message": "Pintasan papan kekunci untuk berpusing di antara dua tab aktif baru-baru ini."
+    "message": "Gunakan pintasan <Alt + Q> (atau tentukan sendiri) untuk bertukar antara dua tab terakhir anda yang digunakan. Memerlukan bayaran sekali sahaja."
   }
 }

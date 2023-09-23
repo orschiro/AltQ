@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q Wisselen tussen recent actieve tabbladen"
+    "message": "Wissel van laatste tabblad"
   },
   "appDesc": {
-    "message": "Sneltoets om te bladeren tussen de twee meest recent actieve tabbladen."
+    "message": "Gebruik de sneltoets <Alt + Q> (of definieer uw eigen) om te schakelen tussen de twee laatst gebruikte tabbladen. Vereist een eenmalige betaling."
   }
 }

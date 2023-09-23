@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Wechseln Sie zwischen Ihren beiden letzten Tabs"
+    "message": "Letzte Tabs wechseln"
   },
   "appDesc": {
-    "message": "Verwenden Sie die Tastenkombination <Alt + Q>, um zwischen Ihren beiden zuletzt verwendeten Registerkarten zu wechseln. Die Verlängerung erfordert eine einmalige Zahlung, um sie zu nutzen."
+    "message": "Verwenden Sie die Tastenkombination <Alt + Q> (oder definieren Sie eine eigene), um zwischen Ihren beiden zuletzt verwendeten Tabs zu wechseln. Erfordert eine einmalige Zahlung."
   }
 }

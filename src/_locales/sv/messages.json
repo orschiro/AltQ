@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q Switch Växla senaste aktiva flikar"
+    "message": "Byt sista flikar"
   },
   "appDesc": {
-    "message": "Kortkommando för att växla mellan de två senast aktiva flikarna."
+    "message": "Använd genvägen <Alt + Q> (eller definiera din egen) för att växla mellan dina två senast använda flikar. Kräver en engångsbetalning."
   }
 }

@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Alt + Q botón para cambiar recientes pestañas activas"
+    "message": "Cambiar las últimas pestañas"
   },
   "appDesc": {
-    "message": "Método abreviado de teclado para cambiar entre las dos pestañas utilizadas más recientemente"
+    "message": "Utilice el atajo <Alt + Q> (o defina el suyo propio) para cambiar entre las dos últimas pestañas utilizadas. Requiere un pago único."
   }
 }

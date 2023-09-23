@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "Switch between your two most recent tabs"
+    "message": "Switch Last Tabs"
   },
   "appDesc": {
-    "message": "Use the shortcut <Alt + Q> to switch between your two most recently used tabs. The extension requires a one-time payment to use it."
+    "message": "Use the shortcut <Alt + Q> (or define your own) to switch between your two last used tabs. Requires a one-time payment."
   }
 }
