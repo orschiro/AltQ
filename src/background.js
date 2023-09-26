@@ -1,7 +1,8 @@
 // ExtensionPay
 const extpay = ExtPay('alt--q-switch-recent-active-tabs');
+extpay.startBackground();
 let paid;
-let newInstall;
+
 
 let tabHistory = {};
 let currentTabId;
@@ -36,8 +37,6 @@ function checkUser() {
 // Check whether new browser version is installed
 chrome.runtime.onInstalled.addListener(function(details){
     if(details.reason == "install"){
-        console.log("This is a first install!");
-		newInstall = true;
 		checkUser()
     } else if(details.reason == "update"){
 		checkUser()
@@ -50,11 +49,16 @@ chrome.runtime.onStartup.addListener(function() {
 });
 
 chrome.browserAction.onClicked.addListener(function(tab) {	
-	if (!paid == true && !newInstall == true) {
-				extpay.openPaymentPage()
-			}
+	if (!paid == true) {
+		checkUser()
+		if (!paid == true) {
+			extpay.openPaymentPage()
+		}
+		else if (paid == true)
+			switchTabs()	
+	}
 
-	else if (paid == true || newInstall == true) {
+	else if (paid == true) {
 		switchTabs()
 	}
 });
