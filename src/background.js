@@ -22,11 +22,13 @@ function init() {
 	});
 }
 
-function switchTabs() {
-	let prevTab = tabHistory[currentTabId].prev;
-	if (prevTab.id) { // Check if is dummy start.
-		chrome.tabs.update(prevTab.id, {active: true});
-}}
+async function switchTabs() {
+  let prevTab = tabHistory[currentTabId].prev;
+  if (prevTab.id != null) { // may be 0 in some browsers
+    const {windowId} = await chrome.tabs.update(prevTab.id, {active: true});
+    chrome.windows.update(windowId, {focused: true});
+  }
+}
 
 function checkUser() {
 	extpay.getUser().then(user => {
