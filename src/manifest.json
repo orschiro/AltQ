@@ -1,17 +1,15 @@
 {
 	"background": {
-		"scripts": ["ExtPay.js", "background.js"]
+		"service_worker": "background.js"
 	},
+	"action": {},
 	"name": "__MSG_appName__",
 	"description": "__MSG_appDesc__",
 	"default_locale": "en",
-	"version": "47",
-	"manifest_version": 2,
-	"browser_action": {
-		"default_icon": "icon.png"
-	},
+	"version": "48",
+	"manifest_version": 3,
 	"commands": {
-		"_execute_browser_action": {
+		"_execute_action": {
 			"suggested_key": {
 				"default": "Alt+Q",
               	"windows": "Alt+Q",

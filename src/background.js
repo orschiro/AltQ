@@ -1,8 +1,7 @@
 // ExtensionPay
+importScripts('ExtPay.js')
 const extpay = ExtPay('alt--q-switch-recent-active-tabs');
 extpay.startBackground();
-let paid;
-
 
 let tabHistory = {};
 let currentTabId;
@@ -33,6 +32,8 @@ async function switchTabs() {
 function checkUser() {
 	extpay.getUser().then(user => {
 		paid = user.paid;
+		chrome.storage.local.set({ paid: paid });
+		console.log("Check user function = " + paid);
 	});
 }
 
@@ -50,8 +51,17 @@ chrome.runtime.onStartup.addListener(function() {
 	checkUser()
 });
 
-chrome.browserAction.onClicked.addListener(function(tab) {	
-	if (!paid == true) {
+chrome.action.onClicked.addListener(function(tab) {	
+	chrome.storage.local.get("paid", function (status) {
+		paid = status.paid;
+	});
+	console.log("On clicked function = " + paid);
+	
+	if (paid === undefined) {
+		// switchTabs()
+		checkUser()
+	}
+	else if (!paid == true) {
 		checkUser()
 		if (!paid == true) {
 			extpay.openPaymentPage()
