@@ -2,6 +2,7 @@
 importScripts('ExtPay.js')
 const extpay = ExtPay('alt--q-switch-recent-active-tabs');
 extpay.startBackground();
+let paid;
 
 let tabHistory = {};
 let currentTabId;
@@ -21,6 +22,7 @@ function init() {
 	});
 }
 
+// https://stackoverflow.com/questions/78012294/address-chrome-tabs-inside-different-windows
 async function switchTabs() {
   let prevTab = tabHistory[currentTabId].prev;
   if (prevTab.id != null) { // may be 0 in some browsers
@@ -32,47 +34,43 @@ async function switchTabs() {
 function checkUser() {
 	extpay.getUser().then(user => {
 		paid = user.paid;
-		chrome.storage.local.set({ paid: paid });
-		console.log("Check user function = " + paid);
+		//chrome.storage.local.set({ paid: paid });
+		//console.log("Check user function = " + paid);
 	});
 }
 
 // Check whether new browser version is installed
-chrome.runtime.onInstalled.addListener(function(details){
+/* chrome.runtime.onInstalled.addListener(function(details){
     if(details.reason == "install"){
 		checkUser()
     } else if(details.reason == "update"){
 		checkUser()
     }
-});
+}); */
 
 // On browser start
-chrome.runtime.onStartup.addListener(function() {
+/* chrome.runtime.onStartup.addListener(function() {
 	checkUser()
-});
+}); */
 
 chrome.action.onClicked.addListener(function(tab) {	
-	chrome.storage.local.get("paid", function (status) {
+/* 	chrome.storage.local.get("paid", function (status) {
 		paid = status.paid;
-	});
-	console.log("On clicked function = " + paid);
+	});*/
+	console.log("On clicked listener. Status of paid = " + paid); 
 	
 	if (paid === undefined) {
-		// switchTabs()
 		checkUser()
+		switchTabs()
 	}
-	else if (!paid == true) {
-		checkUser()
-		if (!paid == true) {
-			extpay.openPaymentPage()
-		}
-		else if (paid == true)
-			switchTabs()	
-	}
-
 	else if (paid == true) {
 		switchTabs()
 	}
+	else if (paid == false) {
+		extpay.openPaymentPage()
+	}
+	
+	checkUser()
 });
 
 chrome.tabs.onActivated.addListener(function(info) {
