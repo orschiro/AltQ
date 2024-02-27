@@ -1,6 +1,6 @@
 // ExtensionPay
 importScripts('ExtPay.js')
-const extpay = ExtPay('alt--q-switch-recent-active-tabs');
+var extpay = ExtPay('alt--q-switch-recent-active-tabs');
 extpay.startBackground();
 let paid;
 
@@ -22,6 +22,24 @@ function init() {
 	});
 }
 
+function checkUser() {	
+	extpay.getUser().then(user => {
+		paid = user.paid;
+	});
+}
+
+// https://stackoverflow.com/questions/66618136/persistent-service-worker-in-chrome-extension
+async function createOffscreen() {
+  await chrome.offscreen.createDocument({
+    url: 'offscreen.html',
+    reasons: ['BLOBS'],
+    justification: 'keep service worker running',
+  }).catch(() => {});
+}
+chrome.runtime.onStartup.addListener(createOffscreen);
+self.onmessage = e => {}; // keepAlive
+createOffscreen();
+
 // https://stackoverflow.com/questions/78012294/address-chrome-tabs-inside-different-windows
 async function switchTabs() {
   let prevTab = tabHistory[currentTabId].prev;
@@ -31,46 +49,32 @@ async function switchTabs() {
   }
 }
 
-function checkUser() {
-	extpay.getUser().then(user => {
-		paid = user.paid;
-		//chrome.storage.local.set({ paid: paid });
-		//console.log("Check user function = " + paid);
-	});
-}
-
 // Check whether new browser version is installed
-/* chrome.runtime.onInstalled.addListener(function(details){
+chrome.runtime.onInstalled.addListener(function(details){
     if(details.reason == "install"){
-		checkUser()
+		extpay.openPaymentPage()
     } else if(details.reason == "update"){
 		checkUser()
     }
-}); */
+});
 
 // On browser start
-/* chrome.runtime.onStartup.addListener(function() {
+chrome.runtime.onStartup.addListener(function() {
 	checkUser()
-}); */
+});
 
-chrome.action.onClicked.addListener(function(tab) {	
-/* 	chrome.storage.local.get("paid", function (status) {
-		paid = status.paid;
-	});*/
-	console.log("On clicked listener. Status of paid = " + paid); 
-	
-	if (paid === undefined) {
-		checkUser()
-		switchTabs()
-	}
-	else if (paid == true) {
-		switchTabs()
-	}
+// on click or shortcut
+chrome.action.onClicked.addListener(function(tab) {
+    if (paid == true) {
+        switchTabs()
+    } 
 	else if (paid == false) {
-		extpay.openPaymentPage()
+		extpay.openPaymentPage()	
 	}
-	
-	checkUser()
+	else {
+        switchTabs()
+		checkUser()
+    }
 });
 
 chrome.tabs.onActivated.addListener(function(info) {
