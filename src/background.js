@@ -3,6 +3,7 @@ importScripts('ExtPay.js')
 var extpay = ExtPay('alt--q-switch-recent-active-tabs');
 extpay.startBackground();
 let paid;
+let i;
 
 let tabHistory = {};
 let currentTabId;
@@ -65,13 +66,17 @@ chrome.runtime.onStartup.addListener(function() {
 
 // on click or shortcut
 chrome.action.onClicked.addListener(function(tab) {
+	for (let i = 0; i < 5; i++) {
+		checkUser()
+		switchTabs()
+	}
     if (paid == true) {
         switchTabs()
     } 
 	else if (paid == false) {
 		extpay.openPaymentPage()	
 	}
-	else {
+	else if (paid == null) {
         switchTabs()
 		checkUser()
     }
