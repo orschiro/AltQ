@@ -6,7 +6,7 @@
 	"name": "__MSG_appName__",
 	"description": "__MSG_appDesc__",
 	"default_locale": "en",
-	"version": "51",
+	"version": "52",
 	"manifest_version": 3,
 	"commands": {
 		"_execute_action": {
