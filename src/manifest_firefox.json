@@ -1,0 +1,37 @@
+{
+	"browser_specific_settings": {
+	"gecko": {
+		"id": "{f6465b7e-dc7c-4095-ac87-ac1c83ad9a73}"
+	}
+	},
+	"background": {
+    "scripts": ["background.js"]
+	},
+	"action": {},
+	"name": "__MSG_appName__",
+	"description": "__MSG_appDesc__",
+	"default_locale": "en",
+	"version": "52",
+	"manifest_version": 3,
+	"commands": {
+		"_execute_action": {
+			"suggested_key": {
+				"default": "Alt+Q",
+              	"windows": "Alt+Q",
+              	"mac": "Alt+Q",
+              	"chromeos": "Alt+Q",
+              	"linux": "Alt+Q"
+			}
+		}
+	},
+	"permissions": [
+        "storage",
+		"offscreen"
+	],
+	"icons": {
+		"16": "icon_16.png",
+		"32": "icon_32.png",
+		"48": "icon_48.png",
+		"128": "icon_128.png"
+	}
+}
