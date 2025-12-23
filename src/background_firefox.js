@@ -1,5 +1,3 @@
-// ExtensionPay
-importScripts('ExtPay.js')
 var extpay = ExtPay('alt--q-switch-recent-active-tabs');
 extpay.startBackground();
 

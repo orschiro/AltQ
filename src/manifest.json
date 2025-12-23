@@ -6,7 +6,7 @@
 	"name": "__MSG_appName__",
 	"description": "__MSG_appDesc__",
 	"default_locale": "en",
-	"version": "52",
+	"version": "53",
 	"manifest_version": 3,
 	"commands": {
 		"_execute_action": {
@@ -20,8 +20,7 @@
 		}
 	},
 	"permissions": [
-        "storage",
-		"offscreen"
+        "storage"
 	],
 	"icons": {
 		"16": "icon_16.png",
