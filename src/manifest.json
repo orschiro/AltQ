@@ -1,12 +1,13 @@
 {
 	"background": {
-		"service_worker": "background.js"
+		"service_worker": "background.js",
+		"scripts": ["ExtPay.js", "background.js"]
 	},
 	"action": {},
 	"name": "__MSG_appName__",
 	"description": "__MSG_appDesc__",
 	"default_locale": "en",
-	"version": "53",
+	"version": "54",
 	"manifest_version": 3,
 	"commands": {
 		"_execute_action": {
@@ -27,5 +28,10 @@
 		"32": "icon_32.png",
 		"48": "icon_48.png",
 		"128": "icon_128.png"
+	},
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "{f6465b7e-dc7c-4095-ac87-ac1c83ad9a73}"
+		}
 	}
 }
