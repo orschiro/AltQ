@@ -1,0 +1,8 @@
+{
+  "appName": {
+    "message": "Přepnout poslední karty"
+  },
+  "appDesc": {
+    "message": "K přepínání mezi dvěma naposledy použitými kartami použijte zkratku <Alt + Q> (nebo definujte vlastní). Vyžaduje jednorázovou platbu."
+  }
+}
