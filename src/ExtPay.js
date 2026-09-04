@@ -1362,10 +1362,11 @@ You can copy and paste this to your manifest.json file to fix this error:
 	            }
 	        }
 
-	        const resp = await fetch(`${EXTENSION_URL}/api/v2/user?api_key=${api_key}`, {
+	        const resp = await fetch(`${EXTENSION_URL}/api/v2/user`, {
 	            method: 'GET',
 	            headers: {
 	                'Accept': 'application/json',
+	                'Authorization': `Bearer ${api_key}`,
 	            }
 	        });
 	        // TODO: think harder about error states and what users will want (bad connection, server error, id not found)
