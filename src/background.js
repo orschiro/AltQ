@@ -102,12 +102,70 @@ function withHistoryLock(fn) {
 	return result;
 }
 
+// --- Payment status -------------------------------------------------------
+// checkUser() used to be `await`ed from handleSwitchInvoked() below without
+// actually returning its promise (it just fired extpay.getUser().then(...)
+// and fell off the end returning undefined). That meant `await checkUser()`
+// resolved instantly regardless of how long the network call to
+// extensionpay.com actually took - so `paid` was effectively always one
+// click stale. The real symptom this caused: if a stale/late-resolving
+// check happened to land `paid = false` right as you pressed the shortcut,
+// handleSwitchInvoked would skip switchTabs() entirely and call
+// extpay.openPaymentPage() instead, which does two storage round-trips plus
+// a live fetch() to extensionpay.com before anything visible happens - a
+// multi-second hang with no tab switch, right after Chrome cold-starts the
+// service worker (which is also when network stacks/DNS are coldest).
+//
+// Fixed properly now: checkUser() returns its promise so callers that do
+// want to wait for it, can. But handleSwitchInvoked() below no longer waits
+// on it at all - the switch action always acts on whatever `paid` value is
+// already cached, and a fresh check is kicked off in the background,
+// throttled (see maybeRefreshUser) so we're not hitting the network on
+// every single press.
 function checkUser() {
-	extpay.getUser().then(user => {
+	return extpay.getUser().then(user => {
 		paid = user.paid;
 	}).catch(err => {
 		console.error('Error checking user:', err);
 	});
+}
+
+let userCheckInFlight = false;
+let lastUserCheckStarted = 0;
+const USER_CHECK_INTERVAL_MS = 5 * 60 * 1000; // re-check payment status at most every 5 minutes
+
+function maybeRefreshUser() {
+	if (userCheckInFlight) return;
+	const now = Date.now();
+	if (paid !== undefined && now - lastUserCheckStarted < USER_CHECK_INTERVAL_MS) return;
+	userCheckInFlight = true;
+	lastUserCheckStarted = now;
+	checkUser().finally(() => {
+		userCheckInFlight = false;
+	});
+}
+
+// Seed `paid` from whatever ExtPay already has cached in storage, without
+// making a network call. This runs on every script load (including MV3
+// service-worker cold starts, which happen constantly), so a fresh worker
+// isn't stuck with `paid === undefined` - and therefore isn't stuck
+// optimistically guessing - until a live fetch to extensionpay.com returns.
+async function seedCachedPaidStatus() {
+	try {
+		let result;
+		try {
+			result = await browserAPI.storage.sync.get('extensionpay_user');
+		} catch (err) {
+			result = await browserAPI.storage.local.get('extensionpay_user');
+		}
+		const cachedUser = result && result.extensionpay_user;
+		if (cachedUser && typeof cachedUser.paid === 'boolean') {
+			paid = cachedUser.paid;
+			console.debug('[seedCachedPaidStatus] seeded paid =', paid, 'from cache');
+		}
+	} catch (err) {
+		console.debug('[seedCachedPaidStatus] failed', err);
+	}
 }
 
 // Seed history with whatever tab is currently active, but only if we don't
@@ -185,7 +243,7 @@ browserAPI.runtime.onInstalled.addListener(function(details){
 	if(details.reason == "install"){
 		extpay.openPaymentPage();
 	} else if(details.reason == "update"){
-		checkUser();
+		seedCachedPaidStatus().then(checkUser);
 	}
 	initHistory();
 	initFocusedWindow();
@@ -193,7 +251,7 @@ browserAPI.runtime.onInstalled.addListener(function(details){
 
 // On browser start
 browserAPI.runtime.onStartup.addListener(function() {
-	checkUser();
+	seedCachedPaidStatus().then(checkUser);
 	initHistory();
 	initFocusedWindow();
 });
@@ -210,21 +268,28 @@ browserAPI.runtime.onStartup.addListener(function() {
 // "only switches within whichever window I click the icon from".
 async function handleSwitchInvoked(source, tab) {
 	console.debug('[handleSwitchInvoked] source =', source, 'tab =', tab && tab.id, 'window =', tab && tab.windowId);
-	await checkUser();
+	// Kick off a payment-status refresh in the background (throttled - see
+	// maybeRefreshUser) instead of waiting on it. Whatever `paid` already
+	// holds (seeded from cache at startup, or from the last completed
+	// check) is what this invocation acts on, so the shortcut/click always
+	// responds immediately regardless of extensionpay.com's response time.
+	maybeRefreshUser();
+
 	if (tab && tab.windowId != null) {
 		focusedWindowId = tab.windowId;
 	}
 	await syncCurrentActiveTab();
 
-	if (paid == true) {
-		await switchTabs();
-	}
-	else if (paid == false) {
+	if (paid === false) {
 		extpay.openPaymentPage();
 	}
-	else if (paid == null) {
+	else {
+		// paid === true, or paid === undefined (not known yet - e.g. very
+		// first run before the initial check has returned). Optimistically
+		// allow the switch: worst case a not-yet-paid user gets one or two
+		// free switches before the real status comes back, which is a far
+		// better failure mode than the shortcut silently hanging.
 		await switchTabs();
-		checkUser();
 	}
 }
 
@@ -384,6 +449,9 @@ function validateHistory(history) {
 
 // Initialize on script load. This also covers the worker being restarted
 // mid-session (e.g. after Chrome's idle timeout): initHistory() is a no-op
-// if storage.session already has data, so nothing is lost.
+// if storage.session already has data, so nothing is lost. seedCachedPaidStatus()
+// gives `paid` a same-tick, network-free value on every one of these cold
+// starts so handleSwitchInvoked() is never left guessing with `undefined`.
+seedCachedPaidStatus();
 initHistory();
 initFocusedWindow();
