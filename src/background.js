@@ -10,6 +10,45 @@ if (typeof ExtPay === 'undefined' && typeof importScripts === 'function') {
 var extpay = ExtPay('alt--q-switch-recent-active-tabs');
 extpay.startBackground();
 
+// ExtPay fires this the moment a payment is confirmed, independent of any
+// polling. Without this listener, the only way `paid` ever gets set is
+// checkUser() (via maybeRefreshUser(), throttled and never awaited) or
+// seedCachedPaidStatus() re-reading whatever was last cached - both of
+// which can easily miss the actual login/payment moment on MV3, since the
+// service worker is free to be killed seconds after the payment tab opens
+// and isn't guaranteed to be alive again when the payment completes. That
+// produces exactly the symptom of "logged in, but the extension keeps
+// treating me as unpaid": a single stale `paid = false`, cached from a
+// check that ran before payment went through, then keeps getting re-seeded
+// from storage on every subsequent cold start, with nothing to ever
+// overwrite it with the truth. Listening for onPaid gives us a direct,
+// authoritative signal the instant it happens, instead of relying on that
+// polling to eventually line up.
+extpay.onPaid.addListener(function(user) {
+	console.debug('[extpay.onPaid] payment confirmed, paid = true');
+	paid = true;
+});
+
+// React the moment ExtPay detects a completed payment, rather than waiting
+// for the next throttled checkUser() call (see maybeRefreshUser below). This
+// is what was missing before: without this listener, `paid` only ever
+// changed value inside checkUser(), and checkUser() was gated by a 5-minute
+// throttle - so a user who paid right after being shown the payment page
+// (the normal flow: press shortcut while unpaid -> openPaymentPage() ->
+// pay -> return) stayed stuck with the stale `paid = false` from the check
+// that triggered openPaymentPage() in the first place, for up to 5 more
+// minutes. Every press in that window re-hit the `paid === false` branch in
+// handleSwitchInvoked and reopened the (now already-paid) account/billing
+// page instead of switching tabs.
+extpay.onPaid.addListener(function(user) {
+	console.debug('[extpay.onPaid] payment detected, unblocking', user);
+	paid = true;
+	// Treat this as equivalent to a fresh checkUser() completing, so
+	// maybeRefreshUser doesn't immediately fire another redundant network
+	// check on the very next press.
+	lastUserCheckStarted = Date.now();
+});
+
 // Use the native Promise-based `browser` API where available (Firefox),
 // falling back to `chrome` (Chrome/Edge/Brave/etc).
 const browserAPI = typeof browser !== 'undefined' ? browser : chrome;
@@ -137,7 +176,15 @@ const USER_CHECK_INTERVAL_MS = 5 * 60 * 1000; // re-check payment status at most
 function maybeRefreshUser() {
 	if (userCheckInFlight) return;
 	const now = Date.now();
-	if (paid !== undefined && now - lastUserCheckStarted < USER_CHECK_INTERVAL_MS) return;
+	// Only throttle while we currently believe the user IS paid - that's the
+	// low-stakes direction to be wrong in (worst case: a lapsed subscription
+	// stays treated as paid for a few extra minutes). `paid === false` (or
+	// still undefined, e.g. very first run) always gets a fresh check on
+	// every press instead: being wrong in that direction means every press
+	// keeps hitting the `paid === false` branch and reopening the
+	// payment/billing page even after the person has actually paid, which is
+	// the far worse failure mode and exactly what caused this bug.
+	if (paid === true && now - lastUserCheckStarted < USER_CHECK_INTERVAL_MS) return;
 	userCheckInFlight = true;
 	lastUserCheckStarted = now;
 	checkUser().finally(() => {
@@ -258,14 +305,16 @@ browserAPI.runtime.onStartup.addListener(function() {
 
 // Shared logic for "the user invoked the switch action", regardless of
 // whether it came from clicking the toolbar icon (browserAction/action
-// .onClicked) or a keyboard shortcut (commands.onCommand). Manifest V3 (and
-// V2) only routes a keyboard shortcut to onClicked automatically if the
-// manifest's commands entry uses the reserved name "_execute_action" (or
-// "_execute_browser_action" in MV2) — a custom command name instead fires
-// commands.onCommand, which nothing was listening to. If that's the case
-// here, the keyboard shortcut would silently do nothing at all while
-// clicking the toolbar icon still worked, which looks exactly like
-// "only switches within whichever window I click the icon from".
+// .onClicked), a keyboard shortcut (commands.onCommand), or the content
+// script's own Alt+Q capture (runtime.onMessage - see below for why that
+// third path exists). Manifest V3 (and V2) only routes a keyboard shortcut
+// to onClicked automatically if the manifest's commands entry uses the
+// reserved name "_execute_action" (or "_execute_browser_action" in MV2) —
+// a custom command name instead fires commands.onCommand, which nothing
+// was listening to. If that's the case here, the keyboard shortcut would
+// silently do nothing at all while clicking the toolbar icon still worked,
+// which looks exactly like "only switches within whichever window I click
+// the icon from".
 async function handleSwitchInvoked(source, tab) {
 	console.debug('[handleSwitchInvoked] source =', source, 'tab =', tab && tab.id, 'window =', tab && tab.windowId);
 	// Kick off a payment-status refresh in the background (throttled - see
@@ -279,6 +328,21 @@ async function handleSwitchInvoked(source, tab) {
 		focusedWindowId = tab.windowId;
 	}
 	await syncCurrentActiveTab();
+
+	if (paid === false) {
+		// `paid` being false here might not be current. It could be a value
+		// re-seeded from a stale storage.sync/local cache after an MV3
+		// service-worker restart, or the result of an earlier checkUser()
+		// call that happened to run before ExtPay/Stripe finished processing
+		// a just-completed payment. Since the consequence of trusting a
+		// stale false is repeatedly sending an already-paid user to
+		// checkout/billing instead of switching tabs, do one fresh, awaited
+		// check right before acting on it - unlike maybeRefreshUser() above,
+		// this one is awaited, so it can't be cut short by the service
+		// worker being reaped before it resolves the way a fire-and-forget
+		// checkUser() call could be.
+		await checkUser();
+	}
 
 	if (paid === false) {
 		extpay.openPaymentPage();
@@ -311,6 +375,37 @@ if (browserAPI.commands && browserAPI.commands.onCommand) {
 		await handleSwitchInvoked('onCommand:' + command, tabs && tabs[0]);
 	});
 }
+
+// Fallback path for pages that swallow the Alt+Q keydown themselves.
+//
+// Firefox's `commands` shortcuts are only reserved/uncancellable for a
+// small built-in list (Ctrl+T, Ctrl+W, etc). For everything else, including
+// Alt+Q, the keydown reaches page content first, and if the page's own JS
+// calls event.preventDefault() on it, Firefox drops the extension shortcut
+// silently - commands.onCommand above never fires at all, with nothing
+// logged and no error. This was observed on pages with their own
+// keyboard-driven overlays (e.g. GitLab's enlarged-image lightbox), which
+// bind their own keydown handling while open and preventDefault() broadly.
+//
+// content-script.js runs on every page (see manifest.json) and installs a
+// capture-phase keydown listener early enough (document_start) to catch
+// Alt+Q ahead of the page's own handler and call
+// stopImmediatePropagation() itself, then relays it here via sendMessage.
+// This listener reuses the exact same handleSwitchInvoked() path as the
+// other two triggers, so history-recording, the payment check, and the
+// actual tab switch all behave identically regardless of which of the
+// three paths fired.
+browserAPI.runtime.onMessage.addListener(function(message, sender) {
+	if (!message || message.type !== 'switch-tabs') {
+		return;
+	}
+	console.debug('[runtime.onMessage] switch-tabs from tab', sender.tab && sender.tab.id);
+	// Returning the promise (rather than using it fire-and-forget) lets the
+	// sendMessage() call in content-script.js resolve once this has
+	// actually finished, and lets Chrome/Firefox know to keep the message
+	// channel open until it does.
+	return handleSwitchInvoked('contentScript', sender.tab);
+});
 
 // Core "a tab became the active one" logic, shared by browserAPI.tabs.onActivated
 // and browserAPI.windows.onFocusChanged (see below for why both are needed).
