@@ -24,28 +24,15 @@ extpay.startBackground();
 // overwrite it with the truth. Listening for onPaid gives us a direct,
 // authoritative signal the instant it happens, instead of relying on that
 // polling to eventually line up.
+//
+// `lastUserCheckStarted` is also updated here, so this counts as
+// equivalent to a fresh checkUser() completing - otherwise maybeRefreshUser
+// would see `paid` freshly flip to true but `lastUserCheckStarted` still
+// at its old value, and could fire an immediate, redundant network check
+// on the very next press.
 extpay.onPaid.addListener(function(user) {
 	console.debug('[extpay.onPaid] payment confirmed, paid = true');
 	paid = true;
-});
-
-// React the moment ExtPay detects a completed payment, rather than waiting
-// for the next throttled checkUser() call (see maybeRefreshUser below). This
-// is what was missing before: without this listener, `paid` only ever
-// changed value inside checkUser(), and checkUser() was gated by a 5-minute
-// throttle - so a user who paid right after being shown the payment page
-// (the normal flow: press shortcut while unpaid -> openPaymentPage() ->
-// pay -> return) stayed stuck with the stale `paid = false` from the check
-// that triggered openPaymentPage() in the first place, for up to 5 more
-// minutes. Every press in that window re-hit the `paid === false` branch in
-// handleSwitchInvoked and reopened the (now already-paid) account/billing
-// page instead of switching tabs.
-extpay.onPaid.addListener(function(user) {
-	console.debug('[extpay.onPaid] payment detected, unblocking', user);
-	paid = true;
-	// Treat this as equivalent to a fresh checkUser() completing, so
-	// maybeRefreshUser doesn't immediately fire another redundant network
-	// check on the very next press.
 	lastUserCheckStarted = Date.now();
 });
 
@@ -215,6 +202,147 @@ async function seedCachedPaidStatus() {
 	}
 }
 
+// --- Alt+Q fallback content script (optional, permission-gated) ---------
+// content-script.js is no longer declared statically in manifest.json's
+// content_scripts with <all_urls> - Chrome Web Store review flags that as
+// "broad host permissions" and delays publishing, since it grants the
+// extension access to every page unconditionally at install time. Instead,
+// "<all_urls>" is listed under optional_host_permissions, and the content
+// script is registered dynamically via chrome.scripting only once the user
+// has explicitly granted that permission from the options page (see
+// options.js). Nothing here changes what the content script itself does or
+// why it's needed (see content-script.js for that) - this only changes
+// *when* it's allowed to run: opt-in instead of on by default.
+const FALLBACK_SCRIPT_ID = 'altq-fallback';
+const FALLBACK_MATCHES = ['<all_urls>'];
+
+async function hasFallbackPermission() {
+	try {
+		return await browserAPI.permissions.contains({origins: FALLBACK_MATCHES});
+	} catch (err) {
+		console.debug('[hasFallbackPermission] failed', err);
+		return false;
+	}
+}
+
+// Makes the actual chrome.scripting registration match whatever permission
+// state currently holds. Safe to call at any time (on startup, after the
+// user toggles the option, after a permission gets revoked from
+// chrome://extensions) - it's idempotent, checking current registration
+// state before acting rather than assuming.
+async function syncFallbackContentScript() {
+	if (!browserAPI.scripting || !browserAPI.scripting.registerContentScripts) {
+		// Older Firefox versions don't have chrome.scripting.
+		// registerContentScripts (added in Firefox 102). Nothing we can do
+		// here without it; the fallback just stays unavailable there.
+		console.debug('[syncFallbackContentScript] scripting.registerContentScripts unavailable');
+		return false;
+	}
+
+	const granted = await hasFallbackPermission();
+
+	let existing = [];
+	try {
+		existing = await browserAPI.scripting.getRegisteredContentScripts({ids: [FALLBACK_SCRIPT_ID]});
+	} catch (err) {
+		console.debug('[syncFallbackContentScript] getRegisteredContentScripts failed', err);
+	}
+	const isRegistered = existing.length > 0;
+
+	if (granted && !isRegistered) {
+		try {
+			await browserAPI.scripting.registerContentScripts([{
+				id: FALLBACK_SCRIPT_ID,
+				matches: FALLBACK_MATCHES,
+				js: ['content-script.js'],
+				runAt: 'document_start',
+				allFrames: true,
+				persistAcrossSessions: true
+			}]);
+			console.debug('[syncFallbackContentScript] registered');
+		} catch (err) {
+			console.error('[syncFallbackContentScript] registration failed', err);
+		}
+		// registerContentScripts() only affects pages that load/navigate from
+		// this point on - it does nothing for tabs that were already open
+		// before the permission was granted (e.g. the exact GitLab tab
+		// someone enabled this setting to fix). Without this, the first
+		// thing a person does after flipping the toggle on is retest in that
+		// same tab and see it still fail, with no indication that a reload
+		// would have fixed it. Push the script into every currently-open,
+		// injectable tab right now so the fix is immediate.
+		await injectFallbackIntoOpenTabs();
+	} else if (!granted && isRegistered) {
+		try {
+			await browserAPI.scripting.unregisterContentScripts({ids: [FALLBACK_SCRIPT_ID]});
+			console.debug('[syncFallbackContentScript] unregistered (permission revoked)');
+		} catch (err) {
+			console.error('[syncFallbackContentScript] unregistration failed', err);
+		}
+	}
+
+	return granted;
+}
+
+// One-time catch-up injection for tabs that predate the permission grant
+// (see the call site above). Uses executeScript rather than
+// registerContentScripts because this needs to happen *once, right now* for
+// tabs that already have a document loaded - registerContentScripts only
+// ever fires on a future navigation. Every tab is attempted independently
+// and failures are swallowed per-tab: plenty of open tabs are legitimately
+// off-limits (chrome://, about:, the Chrome Web Store, other extensions'
+// pages, PDF viewers) and executeScript rejecting for those is expected,
+// not a bug - it shouldn't stop the script from reaching the tabs that
+// *can* take it.
+async function injectFallbackIntoOpenTabs() {
+	if (!browserAPI.scripting || !browserAPI.scripting.executeScript) {
+		return;
+	}
+	let tabs = [];
+	try {
+		tabs = await browserAPI.tabs.query({url: ['http://*/*', 'https://*/*']});
+	} catch (err) {
+		console.debug('[injectFallbackIntoOpenTabs] tabs.query failed', err);
+		return;
+	}
+	await Promise.all(tabs.map(async tab => {
+		try {
+			await browserAPI.scripting.executeScript({
+				target: {tabId: tab.id, allFrames: true},
+				files: ['content-script.js']
+			});
+		} catch (err) {
+			// Expected for restricted pages, or a tab that's mid-navigation -
+			// nothing actionable to do per-tab here.
+			console.debug('[injectFallbackIntoOpenTabs] skipped tab', tab.id, err);
+		}
+	}));
+}
+
+// The user (or Chrome itself, e.g. on a permissions-review prompt) can
+// revoke the <all_urls> grant at any time from chrome://extensions without
+// going through options.js at all. chrome.scripting registrations don't
+// automatically unregister themselves when that happens, so without this
+// listener the extension would keep trying to inject a script it no longer
+// has permission for (a silent, permanent no-op - not a crash, but the
+// fallback would appear "on" in the options page's cached state while
+// actually doing nothing). Reacting to onRemoved/onAdded keeps the actual
+// registration and the true permission state from drifting apart.
+if (browserAPI.permissions && browserAPI.permissions.onRemoved) {
+	browserAPI.permissions.onRemoved.addListener(function(permissions) {
+		if (permissions.origins && permissions.origins.includes('<all_urls>')) {
+			syncFallbackContentScript();
+		}
+	});
+}
+if (browserAPI.permissions && browserAPI.permissions.onAdded) {
+	browserAPI.permissions.onAdded.addListener(function(permissions) {
+		if (permissions.origins && permissions.origins.includes('<all_urls>')) {
+			syncFallbackContentScript();
+		}
+	});
+}
+
 // Seed history with whatever tab is currently active, but only if we don't
 // already have a history (e.g. fresh install, or first event after the
 // browser starts). If the worker was just restarted mid-session,
@@ -294,6 +422,7 @@ browserAPI.runtime.onInstalled.addListener(function(details){
 	}
 	initHistory();
 	initFocusedWindow();
+	syncFallbackContentScript();
 });
 
 // On browser start
@@ -301,6 +430,7 @@ browserAPI.runtime.onStartup.addListener(function() {
 	seedCachedPaidStatus().then(checkUser);
 	initHistory();
 	initFocusedWindow();
+	syncFallbackContentScript();
 });
 
 // Shared logic for "the user invoked the switch action", regardless of
@@ -405,6 +535,20 @@ browserAPI.runtime.onMessage.addListener(function(message, sender) {
 	// actually finished, and lets Chrome/Firefox know to keep the message
 	// channel open until it does.
 	return handleSwitchInvoked('contentScript', sender.tab);
+});
+
+// options.js requests browserAPI.permissions.request()/remove() itself
+// (that call has to originate from a page with its own user-gesture
+// context, which the background script doesn't have) and then sends this
+// message afterwards so the actual chrome.scripting registration gets
+// brought in line with whatever the new permission state is. It also
+// doubles as a "what's the current state" query when options.html first
+// loads, so the toggle can reflect reality instead of assuming.
+browserAPI.runtime.onMessage.addListener(function(message) {
+	if (!message || message.type !== 'sync-fallback-content-script') {
+		return;
+	}
+	return syncFallbackContentScript().then(granted => ({granted}));
 });
 
 // Core "a tab became the active one" logic, shared by browserAPI.tabs.onActivated
