@@ -82,8 +82,20 @@
 		#status.error {
 			color: #b91c1c;
 		}
-		#status.ok {
+				#status.ok {
 			color: #15803d;
+		}
+		button#shortcut-button {
+			flex-shrink: 0;
+			padding: 0.5rem 0.9rem;
+			border-radius: 6px;
+			border: 1px solid #ccc;
+			background: #fff;
+			font-size: 0.9rem;
+			cursor: pointer;
+		}
+		button#shortcut-button:hover {
+			background: #f5f5f5;
 		}
 	</style>
 </head>
@@ -108,7 +120,22 @@
 				<span class="slider"></span>
 			</label>
 		</div>
-		<div id="status"></div>
+				<div id="status"></div>
+	</div>
+
+	<div class="card">
+		<div class="row">
+			<div>
+				<strong>Keyboard shortcut</strong>
+				<p>
+					Alt+Q is the default. Browsers manage shortcuts in their
+					own settings page rather than letting extensions set
+					them directly - click below to open it and change or
+					remove the shortcut.
+				</p>
+			</div>
+			<button id="shortcut-button" type="button">Change…</button>
+		</div>
 	</div>
 
 	<script src="options.js"></script>

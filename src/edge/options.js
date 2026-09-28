@@ -67,4 +67,25 @@ toggle.addEventListener('change', () => {
 	setEnabled(toggle.checked);
 });
 
+// There's no API for an extension to set its own shortcut directly -
+// commands.openShortcutSettings() (Chrome 116+, Firefox 66+) is the only
+// sanctioned entry point, and it opens the browser's native shortcut
+// settings page pre-scrolled to this extension.
+const shortcutButton = document.getElementById('shortcut-button');
+if (shortcutButton) {
+	shortcutButton.addEventListener('click', () => {
+		if (browserAPI.commands && browserAPI.commands.openShortcutSettings) {
+			browserAPI.commands.openShortcutSettings().catch(err => {
+				console.debug('[options] openShortcutSettings failed', err);
+			});
+		} else {
+			// Older browsers without openShortcutSettings: we can't
+			// navigate there for the user (chrome:// pages can't be
+			// opened via tabs.create from extension code), so just tell
+			// them where to go.
+			alert('Open your browser\'s extension settings (e.g. chrome://extensions/shortcuts or about:addons) to change this shortcut.');
+		}
+	});
+}
+
 refreshState();

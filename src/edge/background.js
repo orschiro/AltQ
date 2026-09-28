@@ -416,7 +416,25 @@ function switchTabs() {
 // Check whether new browser version is installed
 browserAPI.runtime.onInstalled.addListener(function(details){
 	if(details.reason == "install"){
+		// Force `paid` to a known value synchronously, before
+		// extpay.openPaymentPage() or any async check gets a chance to
+		// run. Without this, `paid` stays `undefined` until
+		// seedCachedPaidStatus()/checkUser() resolve, and
+		// handleSwitchInvoked() treats `undefined` as "optimistically
+		// allow the switch" - so pressing the shortcut in the brief
+		// window between install and the payment page actually opening
+		// would switch tabs once, for free, before payment status was
+		// ever checked. Setting it to false here means that keypress
+		// instead falls into the `paid === false` branch, which awaits
+		// a fresh checkUser() before deciding, so it can never race
+		// ahead of the real status.
+		paid = false;
 		extpay.openPaymentPage();
+		// Also open the options page in its own tab on first install, so
+		// the "work on every website" fallback setting is discoverable
+		// immediately instead of only via the browser's own
+		// extension-management UI.
+		browserAPI.runtime.openOptionsPage();
 	} else if(details.reason == "update"){
 		seedCachedPaidStatus().then(checkUser);
 	}
