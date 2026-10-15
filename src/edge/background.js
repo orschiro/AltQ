@@ -30,11 +30,20 @@ extpay.startBackground();
 // would see `paid` freshly flip to true but `lastUserCheckStarted` still
 // at its old value, and could fire an immediate, redundant network check
 // on the very next press.
-extpay.onPaid.addListener(function(user) {
-	console.debug('[extpay.onPaid] payment confirmed, paid = true');
-	paid = true;
-	lastUserCheckStarted = Date.now();
-});
+//
+// addListener() throws if the manifest's extensionpay.com content script entry
+// is missing or misconfigured. That must not abort the rest of this file (the
+// shortcut handlers below are registered after it), so it's guarded.
+try {
+	extpay.onPaid.addListener(function(user) {
+		console.debug('[extpay.onPaid] payment confirmed, paid = true');
+		paid = true;
+		lastUserCheckStarted = Date.now();
+		resetUnverifiedUses();
+	});
+} catch (err) {
+	console.error('[extpay.onPaid] could not register listener', err);
+}
 
 // Use the native Promise-based `browser` API where available (Firefox),
 // falling back to `chrome` (Chrome/Edge/Brave/etc).
@@ -129,61 +138,123 @@ function withHistoryLock(fn) {
 }
 
 // --- Payment status -------------------------------------------------------
-// checkUser() used to be `await`ed from handleSwitchInvoked() below without
-// actually returning its promise (it just fired extpay.getUser().then(...)
-// and fell off the end returning undefined). That meant `await checkUser()`
-// resolved instantly regardless of how long the network call to
-// extensionpay.com actually took - so `paid` was effectively always one
-// click stale. The real symptom this caused: if a stale/late-resolving
-// check happened to land `paid = false` right as you pressed the shortcut,
-// handleSwitchInvoked would skip switchTabs() entirely and call
-// extpay.openPaymentPage() instead, which does two storage round-trips plus
-// a live fetch() to extensionpay.com before anything visible happens - a
-// multi-second hang with no tab switch, right after Chrome cold-starts the
-// service worker (which is also when network stacks/DNS are coldest).
+// `paid` has three states:
+//   true      - ExtensionPay (or its local cache) says this user has paid.
+//   false     - ExtensionPay (or its local cache) says this user has NOT paid.
+//   undefined - unknown: nothing cached yet and no check has succeeded.
 //
-// Fixed properly now: checkUser() returns its promise so callers that do
-// want to wait for it, can. But handleSwitchInvoked() below no longer waits
-// on it at all - the switch action always acts on whatever `paid` value is
-// already cached, and a fresh check is kicked off in the background,
-// throttled (see maybeRefreshUser) so we're not hitting the network on
-// every single press.
+// The old code treated `undefined` as "allow the switch" with no limit, and a
+// failed network check just left `paid` untouched. Together that meant any
+// condition that stopped extensionpay.com from answering (ad blocker, firewall,
+// DNS, a server error, a blocked request in Firefox) turned the paywall off
+// permanently - the user never reached the `paid === false` branch that opens
+// the payment page. The fix has two parts:
+//   1. handleSwitchInvoked() now tries a fresh, awaited check whenever `paid`
+//      is anything other than `true` (previously only when it was `false`).
+//   2. If the status is *still* unknown after that, the switch is allowed only
+//      a limited number of times (UNVERIFIED_GRACE_USES) before the payment
+//      page is shown instead. That keeps a genuine one-off outage from
+//      breaking the extension, without making "can't reach the server" a
+//      permanent free pass.
+//
+// checkUser() resolves to true if the server answered and `paid` now holds a
+// real answer, false if the check failed. Concurrent callers share one
+// in-flight request instead of each firing their own.
+let userCheckPromise = null;
 function checkUser() {
-	return extpay.getUser().then(user => {
-		paid = user.paid;
+	if (userCheckPromise) return userCheckPromise;
+	lastUserCheckStarted = Date.now();
+	userCheckPromise = extpay.getUser().then(user => {
+		paid = !!user.paid;
+		// A real answer came back, so any earlier run of unverified uses no
+		// longer counts against the user.
+		resetUnverifiedUses();
+		return true;
 	}).catch(err => {
 		console.error('Error checking user:', err);
+		return false;
+	}).finally(() => {
+		userCheckPromise = null;
 	});
+	return userCheckPromise;
 }
 
-let userCheckInFlight = false;
 let lastUserCheckStarted = 0;
 const USER_CHECK_INTERVAL_MS = 5 * 60 * 1000; // re-check payment status at most every 5 minutes
 
 function maybeRefreshUser() {
-	if (userCheckInFlight) return;
-	const now = Date.now();
+	if (userCheckPromise) return;
 	// Only throttle while we currently believe the user IS paid - that's the
 	// low-stakes direction to be wrong in (worst case: a lapsed subscription
-	// stays treated as paid for a few extra minutes). `paid === false` (or
-	// still undefined, e.g. very first run) always gets a fresh check on
-	// every press instead: being wrong in that direction means every press
-	// keeps hitting the `paid === false` branch and reopening the
-	// payment/billing page even after the person has actually paid, which is
-	// the far worse failure mode and exactly what caused this bug.
-	if (paid === true && now - lastUserCheckStarted < USER_CHECK_INTERVAL_MS) return;
-	userCheckInFlight = true;
-	lastUserCheckStarted = now;
-	checkUser().finally(() => {
-		userCheckInFlight = false;
+	// stays treated as paid for a few extra minutes). Any other state always
+	// gets a fresh check.
+	if (paid === true && Date.now() - lastUserCheckStarted < USER_CHECK_INTERVAL_MS) return;
+	checkUser();
+}
+
+// --- Grace period while payment status can't be verified --------------------
+// Kept in storage.local (not a JS variable) so the count survives the service
+// worker being killed between presses, and (unlike storage.sync) isn't shared
+// across the user's devices.
+const UNVERIFIED_KEY = 'unverifiedUses';
+const UNVERIFIED_GRACE_USES = 25;
+
+async function consumeUnverifiedUse() {
+	try {
+		const result = await browserAPI.storage.local.get(UNVERIFIED_KEY);
+		const used = (result[UNVERIFIED_KEY] || 0) + 1;
+		await browserAPI.storage.local.set({[UNVERIFIED_KEY]: used});
+		return used <= UNVERIFIED_GRACE_USES;
+	} catch (err) {
+		// If even local storage is unusable, don't punish the user for it.
+		console.debug('[consumeUnverifiedUse] failed', err);
+		return true;
+	}
+}
+
+function resetUnverifiedUses() {
+	try {
+		const p = browserAPI.storage.local.set({[UNVERIFIED_KEY]: 0});
+		if (p && p.catch) p.catch(() => {});
+	} catch (err) {
+		console.debug('[resetUnverifiedUses] failed', err);
+	}
+}
+
+// --- Payment page ---------------------------------------------------------
+// extpay.openPaymentPage() creates an API key on first use. Two overlapping
+// calls (e.g. the install handler plus an immediate shortcut press, or a quick
+// double press) each saw "no key yet" and each created one - the second key
+// silently overwrote the first. A user paying through a tab opened with the
+// overwritten key would pay and then keep seeing the paywall, because the
+// extension now queried a different key. Sharing one in-flight call prevents
+// that, and the catch makes a failure (offline, extensionpay.com down) visible
+// in the console instead of an unhandled rejection that silently opens nothing.
+let paymentPagePromise = null;
+function openPaymentPageOnce() {
+	if (paymentPagePromise) return paymentPagePromise;
+	paymentPagePromise = Promise.resolve().then(() => extpay.openPaymentPage()).catch(err => {
+		console.error('[openPaymentPage] failed', err);
+	}).finally(() => {
+		paymentPagePromise = null;
 	});
+	return paymentPagePromise;
 }
 
 // Seed `paid` from whatever ExtPay already has cached in storage, without
 // making a network call. This runs on every script load (including MV3
 // service-worker cold starts, which happen constantly), so a fresh worker
-// isn't stuck with `paid === undefined` - and therefore isn't stuck
-// optimistically guessing - until a live fetch to extensionpay.com returns.
+// isn't stuck with `paid === undefined` until a live fetch to
+// extensionpay.com returns.
+//
+// IMPORTANT: handleSwitchInvoked() awaits the promise this returns (see
+// `seedPromise` at the bottom of the file). Chrome wakes a sleeping worker to
+// deliver the shortcut event, and previously nothing waited for this read, so
+// the handler could run while `paid` was still `undefined` and wave the press
+// through without ever consulting the paywall.
+//
+// It only fills in `paid` if nothing has set it yet, so a slow read can never
+// overwrite a newer value from onPaid, checkUser() or the install handler.
 async function seedCachedPaidStatus() {
 	try {
 		let result;
@@ -193,7 +264,7 @@ async function seedCachedPaidStatus() {
 			result = await browserAPI.storage.local.get('extensionpay_user');
 		}
 		const cachedUser = result && result.extensionpay_user;
-		if (cachedUser && typeof cachedUser.paid === 'boolean') {
+		if (paid === undefined && cachedUser && typeof cachedUser.paid === 'boolean') {
 			paid = cachedUser.paid;
 			console.debug('[seedCachedPaidStatus] seeded paid =', paid, 'from cache');
 		}
@@ -429,14 +500,16 @@ browserAPI.runtime.onInstalled.addListener(function(details){
 		// a fresh checkUser() before deciding, so it can never race
 		// ahead of the real status.
 		paid = false;
-		extpay.openPaymentPage();
-		// Also open the options page in its own tab on first install, so
-		// the "work on every website" fallback setting is discoverable
-		// immediately instead of only via the browser's own
-		// extension-management UI.
-		browserAPI.runtime.openOptionsPage();
+		// Open the options page first (so the "work on every website"
+		// fallback setting is discoverable immediately), then the payment
+		// page, so the payment page is the one left in front. Doing both at
+		// once raced: whichever tab finished creating last ended up on top.
+		Promise.resolve()
+			.then(() => browserAPI.runtime.openOptionsPage())
+			.catch(err => console.debug('[onInstalled] openOptionsPage failed', err))
+			.then(() => openPaymentPageOnce());
 	} else if(details.reason == "update"){
-		seedCachedPaidStatus().then(checkUser);
+		seedPromise.then(() => checkUser());
 	}
 	initHistory();
 	initFocusedWindow();
@@ -445,7 +518,7 @@ browserAPI.runtime.onInstalled.addListener(function(details){
 
 // On browser start
 browserAPI.runtime.onStartup.addListener(function() {
-	seedCachedPaidStatus().then(checkUser);
+	seedPromise.then(() => checkUser());
 	initHistory();
 	initFocusedWindow();
 	syncFallbackContentScript();
@@ -465,43 +538,52 @@ browserAPI.runtime.onStartup.addListener(function() {
 // the icon from".
 async function handleSwitchInvoked(source, tab) {
 	console.debug('[handleSwitchInvoked] source =', source, 'tab =', tab && tab.id, 'window =', tab && tab.windowId);
-	// Kick off a payment-status refresh in the background (throttled - see
-	// maybeRefreshUser) instead of waiting on it. Whatever `paid` already
-	// holds (seeded from cache at startup, or from the last completed
-	// check) is what this invocation acts on, so the shortcut/click always
-	// responds immediately regardless of extensionpay.com's response time.
-	maybeRefreshUser();
+
+	// Wait for the cached payment status to be read before deciding anything.
+	// This is a local storage read (no network), so it's effectively instant,
+	// but it must finish first or `paid` can still be `undefined` on a cold
+	// start and the press would slip past the paywall.
+	await seedPromise;
+
+	// Already known to be paid: act on it immediately and refresh in the
+	// background (throttled - see maybeRefreshUser) so a lapsed subscription is
+	// eventually noticed without making every press wait on the network.
+	if (paid === true) {
+		maybeRefreshUser();
+	}
 
 	if (tab && tab.windowId != null) {
 		focusedWindowId = tab.windowId;
 	}
 	await syncCurrentActiveTab();
 
-	if (paid === false) {
-		// `paid` being false here might not be current. It could be a value
-		// re-seeded from a stale storage.sync/local cache after an MV3
-		// service-worker restart, or the result of an earlier checkUser()
-		// call that happened to run before ExtPay/Stripe finished processing
-		// a just-completed payment. Since the consequence of trusting a
-		// stale false is repeatedly sending an already-paid user to
-		// checkout/billing instead of switching tabs, do one fresh, awaited
-		// check right before acting on it - unlike maybeRefreshUser() above,
-		// this one is awaited, so it can't be cut short by the service
-		// worker being reaped before it resolves the way a fire-and-forget
-		// checkUser() call could be.
+	if (paid !== true) {
+		// `paid` is false (possibly a stale cached false - e.g. a check that
+		// ran before ExtPay/Stripe finished processing a just-completed
+		// payment) or unknown. Either way, do one fresh, awaited check before
+		// acting: trusting a stale false repeatedly sends an already-paid user
+		// to checkout, and trusting an unknown means guessing. Awaited, so it
+		// can't be cut short by the worker being reaped like a fire-and-forget
+		// call could be. checkUser() shares an in-flight request, so this
+		// doesn't duplicate one that's already running.
 		await checkUser();
 	}
 
-	if (paid === false) {
-		extpay.openPaymentPage();
-	}
-	else {
-		// paid === true, or paid === undefined (not known yet - e.g. very
-		// first run before the initial check has returned). Optimistically
-		// allow the switch: worst case a not-yet-paid user gets one or two
-		// free switches before the real status comes back, which is a far
-		// better failure mode than the shortcut silently hanging.
+	if (paid === true) {
 		await switchTabs();
+	} else if (paid === false) {
+		await openPaymentPageOnce();
+	} else {
+		// Still unknown after a fresh check: extensionpay.com couldn't be
+		// reached (or returned an error). Allow a limited number of switches
+		// so a brief outage doesn't break the extension, then stop treating
+		// "can't verify" as "paid" and show the payment page instead.
+		if (await consumeUnverifiedUse()) {
+			await switchTabs();
+		} else {
+			console.debug('[handleSwitchInvoked] payment status unverifiable and grace period used up');
+			await openPaymentPageOnce();
+		}
 	}
 }
 
@@ -543,16 +625,22 @@ if (browserAPI.commands && browserAPI.commands.onCommand) {
 // other two triggers, so history-recording, the payment check, and the
 // actual tab switch all behave identically regardless of which of the
 // three paths fired.
-browserAPI.runtime.onMessage.addListener(function(message, sender) {
+browserAPI.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 	if (!message || message.type !== 'switch-tabs') {
 		return;
 	}
 	console.debug('[runtime.onMessage] switch-tabs from tab', sender.tab && sender.tab.id);
-	// Returning the promise (rather than using it fire-and-forget) lets the
-	// sendMessage() call in content-script.js resolve once this has
-	// actually finished, and lets Chrome/Firefox know to keep the message
-	// channel open until it does.
-	return handleSwitchInvoked('contentScript', sender.tab);
+	// Answer through sendResponse and return true to keep the message
+	// channel open until the switch has finished. Returning a Promise from an
+	// onMessage listener works in Firefox, but Chrome has historically
+	// ignored it (and closes the channel immediately), so sendResponse is the
+	// form that behaves the same in both.
+	handleSwitchInvoked('contentScript', sender.tab).catch(err => {
+		console.error('[runtime.onMessage] switch failed', err);
+	}).finally(() => {
+		try { sendResponse(); } catch (e) { /* sender already gone */ }
+	});
+	return true;
 });
 
 // options.js requests browserAPI.permissions.request()/remove() itself
@@ -562,11 +650,21 @@ browserAPI.runtime.onMessage.addListener(function(message, sender) {
 // brought in line with whatever the new permission state is. It also
 // doubles as a "what's the current state" query when options.html first
 // loads, so the toggle can reflect reality instead of assuming.
-browserAPI.runtime.onMessage.addListener(function(message) {
+browserAPI.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 	if (!message || message.type !== 'sync-fallback-content-script') {
 		return;
 	}
-	return syncFallbackContentScript().then(granted => ({granted}));
+	// sendResponse + `return true`, not a returned Promise: Chrome doesn't
+	// deliver a Promise returned from an onMessage listener, which left
+	// options.js with an undefined response and flipped its toggle back to
+	// "off" right after a successful grant.
+	syncFallbackContentScript().then(granted => ({granted})).catch(err => {
+		console.error('[sync-fallback-content-script] failed', err);
+		return {granted: false};
+	}).then(response => {
+		try { sendResponse(response); } catch (e) { /* sender already gone */ }
+	});
+	return true;
 });
 
 // Core "a tab became the active one" logic, shared by browserAPI.tabs.onActivated
@@ -709,6 +807,6 @@ function validateHistory(history) {
 // if storage.session already has data, so nothing is lost. seedCachedPaidStatus()
 // gives `paid` a same-tick, network-free value on every one of these cold
 // starts so handleSwitchInvoked() is never left guessing with `undefined`.
-seedCachedPaidStatus();
+const seedPromise = seedCachedPaidStatus();
 initHistory();
-initFocusedWindow();
+initFocusedWindow();

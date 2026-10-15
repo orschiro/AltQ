@@ -39,7 +39,14 @@ async function setEnabled(enabled) {
 		}
 
 		const response = await browserAPI.runtime.sendMessage({type: 'sync-fallback-content-script'});
-		toggle.checked = !!(response && response.granted);
+		// If the background script didn't answer (asleep/restarting, or an
+		// older build that returned a Promise Chrome drops), don't assume
+		// "off" - ask the browser what the permission state actually is.
+		if (response && typeof response.granted === 'boolean') {
+			toggle.checked = response.granted;
+		} else {
+			toggle.checked = await browserAPI.permissions.contains({origins: FALLBACK_MATCHES});
+		}
 		setStatus(toggle.checked ? 'Enabled.' : 'Disabled.', 'ok');
 	} catch (err) {
 		console.error('[options] setEnabled failed', err);
