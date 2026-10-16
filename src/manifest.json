@@ -7,7 +7,7 @@
 	"name": "__MSG_appName__",
 	"description": "__MSG_appDesc__",
 	"default_locale": "en",
-	"version": "58",
+	"version": "58.1",
 	"manifest_version": 3,
 	"commands": {
 		"_execute_action": {
@@ -52,4 +52,4 @@
 			"id": "{f6465b7e-dc7c-4095-ac87-ac1c83ad9a73}"
 		}
 	}
-}
+}

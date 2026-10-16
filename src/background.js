@@ -414,6 +414,92 @@ if (browserAPI.permissions && browserAPI.permissions.onAdded) {
 	});
 }
 
+// --- Shortcut binding mirror (for the content-script fallback) -----------
+// The user can now change the shortcut (options page, or the browser's own
+// shortcut settings), so content-script.js can no longer hardcode Alt+Q.
+// Content scripts can't call commands.getAll(), so this reads the real,
+// current binding here and mirrors it into storage.local as a plain
+// descriptor ({code, alt, ctrl, shift, meta}) that the content script can
+// match against a KeyboardEvent directly. storage.local is readable from
+// content scripts in Chrome and Firefox without extra permissions, and
+// content-script.js listens to storage.onChanged, so already-open tabs pick
+// up a new shortcut immediately without a reload.
+//
+// A `null` binding means "no shortcut assigned" (the fallback then does
+// nothing). If the key is missing entirely the content script assumes the
+// manifest default, Alt+Q.
+const SHORTCUT_BINDING_KEY = 'shortcutBinding';
+const IS_MAC = /Mac/i.test(navigator.userAgent);
+
+// Command-shortcut key name ("Q", "7", "F5", "Comma", "Up"...) -> KeyboardEvent.code.
+function shortcutKeyToCode(name) {
+	if (/^[A-Za-z]$/.test(name)) return 'Key' + name.toUpperCase();
+	if (/^[0-9]$/.test(name)) return 'Digit' + name;
+	if (/^F([1-9]|1[0-2])$/.test(name)) return name;
+	const map = {
+		Comma: 'Comma', ',': 'Comma',
+		Period: 'Period', '.': 'Period',
+		Home: 'Home', End: 'End',
+		PageUp: 'PageUp', PageDown: 'PageDown',
+		Space: 'Space', Insert: 'Insert', Delete: 'Delete',
+		Up: 'ArrowUp', Down: 'ArrowDown', Left: 'ArrowLeft', Right: 'ArrowRight'
+	};
+	return map[name] || null;
+}
+
+// Parses what commands.getAll() reports ("Alt+Q", "Ctrl+Shift+Y", or Chrome
+// on macOS's symbol form, e.g. "⌥Q") into a matchable descriptor.
+function parseShortcut(shortcut) {
+	if (!shortcut) return null;
+	const binding = {display: shortcut, code: null, alt: false, ctrl: false, shift: false, meta: false};
+	let rest = shortcut;
+	const symbols = {'⌃': 'ctrl', '⌥': 'alt', '⇧': 'shift', '⌘': 'meta'};
+	for (const sym in symbols) {
+		if (rest.includes(sym)) {
+			binding[symbols[sym]] = true;
+			rest = rest.split(sym).join('');
+		}
+	}
+	for (let part of rest.split('+')) {
+		part = part.trim();
+		if (!part) continue;
+		switch (part) {
+			// "Ctrl" means the Command key on macOS in both browsers.
+			case 'Ctrl': if (IS_MAC) { binding.meta = true; } else { binding.ctrl = true; } break;
+			case 'Command': binding.meta = true; break;
+			case 'MacCtrl': binding.ctrl = true; break;
+			case 'Alt': binding.alt = true; break;
+			case 'Shift': binding.shift = true; break;
+			default: binding.code = shortcutKeyToCode(part);
+		}
+	}
+	return binding.code ? binding : null;
+}
+
+async function syncShortcutBinding() {
+	if (!browserAPI.commands || !browserAPI.commands.getAll) return null;
+	try {
+		const commands = await browserAPI.commands.getAll();
+		const cmd = commands.find(c => c.name === '_execute_action' || c.name === '_execute_browser_action');
+		if (!cmd) return null;
+		const binding = parseShortcut(cmd.shortcut);
+		await browserAPI.storage.local.set({[SHORTCUT_BINDING_KEY]: binding});
+		console.debug('[syncShortcutBinding] shortcut =', cmd.shortcut || '(none)');
+		return binding;
+	} catch (err) {
+		console.debug('[syncShortcutBinding] failed', err);
+		return null;
+	}
+}
+
+// Fires (Firefox 93+) when the user changes the shortcut from about:addons
+// instead of our options page, so the mirror can't drift out of date.
+if (browserAPI.commands && browserAPI.commands.onChanged) {
+	browserAPI.commands.onChanged.addListener(function() {
+		syncShortcutBinding();
+	});
+}
+
 // Seed history with whatever tab is currently active, but only if we don't
 // already have a history (e.g. fresh install, or first event after the
 // browser starts). If the worker was just restarted mid-session,
@@ -514,6 +600,7 @@ browserAPI.runtime.onInstalled.addListener(function(details){
 	initHistory();
 	initFocusedWindow();
 	syncFallbackContentScript();
+	syncShortcutBinding();
 });
 
 // On browser start
@@ -522,6 +609,7 @@ browserAPI.runtime.onStartup.addListener(function() {
 	initHistory();
 	initFocusedWindow();
 	syncFallbackContentScript();
+	syncShortcutBinding();
 });
 
 // Shared logic for "the user invoked the switch action", regardless of
@@ -663,6 +751,19 @@ browserAPI.runtime.onMessage.addListener(function(message, sender, sendResponse)
 		return {granted: false};
 	}).then(response => {
 		try { sendResponse(response); } catch (e) { /* sender already gone */ }
+	});
+	return true;
+});
+
+// options.js changes the shortcut itself (commands.update/reset) and then
+// sends this message so the binding mirrored for content-script.js is
+// refreshed right away.
+browserAPI.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+	if (!message || message.type !== 'sync-shortcut-binding') {
+		return;
+	}
+	syncShortcutBinding().then(binding => {
+		try { sendResponse({binding}); } catch (e) { /* sender already gone */ }
 	});
 	return true;
 });
@@ -809,4 +910,5 @@ function validateHistory(history) {
 // starts so handleSwitchInvoked() is never left guessing with `undefined`.
 const seedPromise = seedCachedPaidStatus();
 initHistory();
-initFocusedWindow();
+initFocusedWindow();
+syncShortcutBinding();

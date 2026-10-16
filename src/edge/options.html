@@ -74,18 +74,49 @@
 			opacity: 0.5;
 			cursor: default;
 		}
-		#status {
+		#status,
+		#shortcut-status {
 			margin-top: 0.75rem;
 			font-size: 0.88rem;
 			min-height: 1.2em;
 		}
-		#status.error {
+		#status.error,
+		#shortcut-status.error {
 			color: #b91c1c;
 		}
-				#status.ok {
+		#status.ok,
+		#shortcut-status.ok {
 			color: #15803d;
 		}
-		button#shortcut-button {
+		.shortcut-controls {
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+			flex-shrink: 0;
+		}
+		kbd#shortcut-display {
+			font-family: inherit;
+			font-size: 0.9rem;
+			padding: 0.35rem 0.7rem;
+			border: 1px solid #ccc;
+			border-bottom-width: 2px;
+			border-radius: 6px;
+			background: #fafafa;
+			min-width: 3.5rem;
+			text-align: center;
+		}
+		kbd#shortcut-display.unset {
+			color: #777;
+			font-style: italic;
+		}
+		kbd#shortcut-display.capturing {
+			border-color: #2563eb;
+			box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+			color: #2563eb;
+		}
+		.shortcut-controls button {
 			flex-shrink: 0;
 			padding: 0.5rem 0.9rem;
 			border-radius: 6px;
@@ -94,7 +125,7 @@
 			font-size: 0.9rem;
 			cursor: pointer;
 		}
-		button#shortcut-button:hover {
+		.shortcut-controls button:hover {
 			background: #f5f5f5;
 		}
 	</style>
@@ -108,10 +139,10 @@
 				<strong>Work on every website</strong>
 				<p>
 					Some websites (e.g. GitLab's enlarged image view) capture
-					the Alt+Q keydown themselves before the browser can pass
-					it to the extension, so the shortcut silently does
-					nothing there. Turning this on lets Alt+Q work on those
-					sites too — clicking the toolbar icon already works
+					the shortcut's keydown themselves before the browser can
+					pass it to the extension, so the shortcut silently does
+					nothing there. Turning this on lets the shortcut work on
+					those sites too — clicking the toolbar icon already works
 					everywhere regardless of this setting.
 				</p>
 			</div>
@@ -127,15 +158,17 @@
 		<div class="row">
 			<div>
 				<strong>Keyboard shortcut</strong>
-				<p>
-					Alt+Q is the default. Browsers manage shortcuts in their
-					own settings page rather than letting extensions set
-					them directly - click below to open it and change or
-					remove the shortcut.
+				<p id="shortcut-help">
+					Alt+Q is the default.
 				</p>
 			</div>
-			<button id="shortcut-button" type="button">Change…</button>
+			<div class="shortcut-controls">
+				<kbd id="shortcut-display">…</kbd>
+				<button id="shortcut-button" type="button">Change…</button>
+				<button id="shortcut-reset" type="button" hidden>Reset</button>
+			</div>
 		</div>
+		<div id="shortcut-status" aria-live="polite"></div>
 	</div>
 
 	<script src="options.js"></script>
